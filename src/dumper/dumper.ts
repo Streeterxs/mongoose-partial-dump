@@ -1,17 +1,17 @@
 import { collectionsToDuplicate } from './collectionsToDuplicate';
 
 type DumperInput = {
-  command: string;
+  collectionName: string;
   getPayload: (collectionName: string) => { [arg: string]: string | undefined };
   fieldsToRemove?: string[];
 };
 
 export const dumper = async ({
-  command,
+  collectionName,
   getPayload,
   fieldsToRemove,
 }: DumperInput) => {
-  const { collections } = collectionsToDuplicate[command];
+  const collections = collectionsToDuplicate(collectionName);
 
   const dump = {};
 
