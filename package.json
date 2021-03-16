@@ -1,0 +1,28 @@
+{
+  "name": "cool-partial-dumper",
+  "version": "1.0.0",
+  "description": "A package to help mongoose users to partially dump models of your db",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "delete:node_modules": "find . -name \"node_modules\" -exec rm -rf '{}' +",
+    "jest": "jest --no-cache --detectOpenHandles"
+  },
+  "author": "Afonso Araújo Neto",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/runtime": "^7.13.10",
+    "mongoose": "^5.12.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.13.10",
+    "@babel/node": "^7.13.10",
+    "@babel/plugin-transform-modules-commonjs": "^7.13.8",
+    "@babel/plugin-transform-runtime": "^7.13.10",
+    "@babel/preset-typescript": "^7.10.4",
+    "babel-jest": "26.6.3",
+    "jest": "^26.6.3",
+    "jest-junit": "12.0.0",
+    "mongodb-memory-server": "^6.9.6"
+  }
+}
