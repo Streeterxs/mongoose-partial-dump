@@ -17,6 +17,6 @@ module.exports = {
         "jest"
     ],
     "rules": {
-        "no-test-prefixes": true
+        "no-test-prefixes": 2
     }
 };

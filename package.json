@@ -38,8 +38,8 @@
     "typescript": "4.2.3"
   },
   "lint-staged": {
-    "src/*.{js,ts}": "eslint --cache --fix && tslint",
-    "src/*.{ts}": "tslint --fix",
-    "src/*.{js,ts,css,md}": "prettier --write"
+    "*.{js,ts}": "eslint --fix",
+    "*.{ts}": "tslint --fix",
+    "*.{js,ts,css,md}": "prettier --write"
   }
 }
