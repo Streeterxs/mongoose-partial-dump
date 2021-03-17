@@ -13,8 +13,10 @@ module.exports = {
         "sourceType": "module"
     },
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "jest"
     ],
     "rules": {
+        "no-test-prefixes": true
     }
 };
