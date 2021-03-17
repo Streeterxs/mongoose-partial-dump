@@ -1,4 +1,4 @@
-{
+module.exports = {
     "env": {
         "browser": true,
         "es2021": true
@@ -19,4 +19,4 @@
     "rules": {
         "no-test-prefixes": 2
     }
-}
+};
