@@ -1,10 +1,16 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from 'mongoose'
 
-const dogSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: false
-    }
-}, { collection: 'Dog' });
+interface IDog extends Document {
+    name: string
+}
+const dogSchema = new mongoose.Schema(
+    {
+        name: {
+            type: String,
+            required: false,
+        },
+    },
+    { collection: 'Dog' }
+)
 
-export default mongoose.model('Dog', dogSchema);
+export default mongoose.model<IDog>('Dog', dogSchema)
