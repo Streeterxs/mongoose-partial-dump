@@ -1,41 +1,50 @@
-import { collectionsToDuplicate } from './collectionsToDuplicate';
+import { Types } from 'mongoose'
+import { collectionsToDuplicate } from './collectionsToDuplicate'
 
 type DumperInput = {
-  collectionName: string;
-  getPayload: (collectionName: string) => { [arg: string]: string | undefined };
-  fieldsToRemove?: string[];
-};
+    collectionName: string
+    getPayload: (
+        collectionName: string
+    ) => {
+        [arg: string]:
+            | string
+            | Types.ObjectId
+            | { $in: string[] | Types.ObjectId[] }
+            | undefined
+    }
+    fieldsToRemove?: string[]
+}
 
 export const dumper = async ({
-  collectionName,
-  getPayload,
-  fieldsToRemove,
+    collectionName,
+    getPayload,
+    fieldsToRemove,
 }: DumperInput) => {
-  const collections = collectionsToDuplicate(collectionName);
+    const collections = collectionsToDuplicate(collectionName)
 
-  const dump = {};
+    const dump = {}
 
-  for (const model of collections) {
-    const collectionName = model.collection.collectionName;
+    for (const model of collections) {
+        const collectionName = model.collection.collectionName
 
-    const payload = getPayload(collectionName);
+        const payload = getPayload(collectionName)
 
-    for await (const doc of model.find(payload).lean()) {
-      if (!(collectionName in dump)) {
-        dump[collectionName] = [];
-      }
+        for await (const doc of model.find(payload).lean()) {
+            if (!(collectionName in dump)) {
+                dump[collectionName] = []
+            }
 
-      if (fieldsToRemove) {
-        for (const field of fieldsToRemove) {
-          doc[field] = null;
+            if (fieldsToRemove) {
+                for (const field of fieldsToRemove) {
+                    doc[field] = null
+                }
+            }
+            dump[collectionName] = [...dump[collectionName], doc]
         }
-      }
-      dump[collectionName] = [...dump[collectionName], doc];
     }
-  }
 
-  //eslint-disable-next-line
-  console.log(dump);
+    //eslint-disable-next-line
+    console.log(dump)
 
-  return dump;
-};
+    return dump
+}
