@@ -14,9 +14,11 @@ module.exports = {
     },
     "plugins": [
         "@typescript-eslint",
-        "jest"
+        "jest",
+        "no-only-tests"
     ],
     "rules": {
-        "jest/no-test-prefixes": 2
+        "jest/no-test-prefixes": "error",
+        "no-only-tests/no-only-tests": "error"
     }
 };
