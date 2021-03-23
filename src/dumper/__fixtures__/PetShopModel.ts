@@ -1,15 +1,22 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const { ObjectId } = mongoose.Schema.Types;
-const petShopSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: false
+const petShopSchema = new mongoose.Schema(
+    {
+        name: {
+            type: String,
+            required: false,
+        },
+        dogs: {
+            type: [ObjectId],
+            ref: 'Dog',
+        },
+        clients: {
+            type: [ObjectId],
+            ref: 'DogOwner',
+        },
     },
-    dogs: {
-        type: [ObjectId],
-        ref: 'Dog'
-    }
-}, {collection: 'PetShop'});
+    { collection: 'PetShop' }
+);
 
 export default mongoose.model('PetShop', petShopSchema);
