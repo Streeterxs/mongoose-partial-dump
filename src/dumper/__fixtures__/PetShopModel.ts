@@ -11,10 +11,6 @@ const petShopSchema = new mongoose.Schema(
             type: [ObjectId],
             ref: 'Dog',
         },
-        clients: {
-            type: [ObjectId],
-            ref: 'DogOwner',
-        },
     },
     { collection: 'PetShop' }
 );
