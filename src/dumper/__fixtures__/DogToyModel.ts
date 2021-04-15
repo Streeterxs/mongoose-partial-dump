@@ -1,6 +1,6 @@
 import mongoose, { Document } from 'mongoose';
 
-interface IDogToy extends Document {
+export interface IDogToy extends Document {
     name: string;
 }
 const dogToySchema = new mongoose.Schema(
