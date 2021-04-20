@@ -1,8 +1,11 @@
 import mongoose, { Document } from 'mongoose';
 
-export interface IPerson extends Document {
+export interface IPerson {
     name: string;
 }
+
+export type IPersonDocument = IPerson & Document;
+
 const personSchema = new mongoose.Schema(
     {
         name: {
@@ -13,4 +16,4 @@ const personSchema = new mongoose.Schema(
     { collection: 'Person' }
 );
 
-export default mongoose.model<IPerson>('Person', personSchema);
+export default mongoose.model<IPersonDocument>('Person', personSchema);

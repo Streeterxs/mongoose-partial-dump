@@ -1,12 +1,16 @@
-import Person, { IPerson } from '../models/PersonModel';
+import Person, { IPerson, IPersonDocument } from '../models/PersonModel';
 
-export const createPerson = async (args?: IPerson) => {
-    const { name = 'mock-person-name', ...properties } = args;
+export const createPerson = async (
+    args: IPerson = {
+        name: 'mock-person-name',
+    }
+): Promise<IPersonDocument> => {
+    const { name, ...properties } = args;
 
-    await new Person({ name, ...properties }).save();
+    return await new Person({ name, ...properties }).save();
 };
 
-export const getOrCreatePerson = async () => {
+export const getOrCreatePerson = async (): Promise<IPersonDocument> => {
     const personFinded = await Person.findOne();
 
     if (!personFinded) {

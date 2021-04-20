@@ -1,8 +1,10 @@
 import mongoose, { Document } from 'mongoose';
 
-export interface IDogToy extends Document {
+export interface IDogToy {
     name: string;
 }
+
+export type IDogToyDocument = IDogToy & Document;
 const dogToySchema = new mongoose.Schema(
     {
         name: {
@@ -13,4 +15,4 @@ const dogToySchema = new mongoose.Schema(
     { collection: 'DogToy' }
 );
 
-export default mongoose.model<IDogToy>('DogToy', dogToySchema);
+export default mongoose.model<IDogToyDocument>('DogToy', dogToySchema);

@@ -7,6 +7,12 @@ import PetShop from '../../../test/models/PetShopModel';
 import Person from '../../../test/models/PersonModel';
 import DogOwner from '../../../test/models/DogOwnerModel';
 
+import { createDog } from '../../../test/fixtures/createDog';
+import { createPerson } from '../../../test/fixtures/createPerson';
+import { createDogOwner } from '../../../test/fixtures/createDogOwner';
+import { createPetShop } from '../../../test/fixtures/createPetShop';
+import { createPetShopClient } from '../../../test/fixtures/createPetShopClient';
+
 const { connect, clearDatabase, closeDatabase } = databaseTestModule();
 
 beforeAll(() => connect());
@@ -120,4 +126,50 @@ it('show copy values for a Dog and a DogOwner', async () => {
     expect(dupGenerated['DogOwner']).toHaveLength(1);
     expect(dupGenerated['DogOwner'][0].person).toEqual(person._id);
     expect(dupGenerated['DogOwner'][0].dog).toEqual(dog._id);
+});
+
+// TODO implement deep partial dump to fix that test
+it.skip('show copy values for a Dog, DogOwner and PetShopClient', async () => {
+    const dog = await createDog({ name: 'Blackie' });
+    const person = await createPerson({ name: 'Charlinhos' });
+    const dogOwner = await createDogOwner({ dog: dog._id, person: person._id });
+    const petShop = await createPetShop({ dogs: [dog._id] });
+    const petShopClient = await createPetShopClient({
+        petShop: petShop._id,
+        dogOwner: dogOwner._id,
+    });
+
+    const getPayload = (collectionName: string) => {
+        switch (collectionName) {
+            case 'Dog':
+                return {
+                    _id: dog._id,
+                };
+            case 'PetShop':
+                return {
+                    dogs: { $in: [dog._id] },
+                };
+
+            default:
+                return {
+                    dog: dog._id,
+                };
+        }
+    };
+
+    const dupGenerated = await dumper({ collectionName: 'Dog', getPayload });
+
+    expect(dupGenerated['Dog']).toHaveLength(1);
+    expect(dupGenerated['Dog'][0].name).toEqual('Blackie');
+
+    expect(dupGenerated['DogOwner']).toHaveLength(1);
+    expect(dupGenerated['DogOwner'][0].person).toEqual(person._id);
+    expect(dupGenerated['DogOwner'][0].dog).toEqual(dog._id);
+
+    expect(dupGenerated['PetShopClient']).toHaveLength(1);
+    expect(dupGenerated['PetShopClient'][0]._id).toEqual(
+        petShopClient._id.toString()
+    );
+    expect(dupGenerated['PetShopClient'][0].petShop).toEqual(petShop._id);
+    expect(dupGenerated['PetShopClient'][0].dogOwner).toEqual(dogOwner._id);
 });
