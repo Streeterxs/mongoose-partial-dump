@@ -1,4 +1,4 @@
-import Person, { IPerson } from './PersonModel';
+import Person, { IPerson } from '../models/PersonModel';
 
 export const createPerson = async (args?: IPerson) => {
     const { name = 'mock-person-name', ...properties } = args;

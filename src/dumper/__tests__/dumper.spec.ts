@@ -2,10 +2,10 @@ import { dumper } from '../dumper';
 
 import { databaseTestModule } from '../../../test/database/memoryDatabase';
 
-import Dog from '../__fixtures__/DogModel';
-import PetShop from '../__fixtures__/PetShopModel';
-import Person from '../__fixtures__/PersonModel';
-import DogOwner from '../__fixtures__/DogOwnerModel';
+import Dog from '../../../test/models/DogModel';
+import PetShop from '../../../test/models/PetShopModel';
+import Person from '../../../test/models/PersonModel';
+import DogOwner from '../../../test/models/DogOwnerModel';
 
 const { connect, clearDatabase, closeDatabase } = databaseTestModule();
 
