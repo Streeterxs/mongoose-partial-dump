@@ -1,4 +1,4 @@
-import Dog, { IDog } from './DogModel';
+import Dog, { IDog } from '../models/DogModel';
 
 export const createDog = async (args?: IDog) => {
     const { name = 'mock-dog-name', toys = [], ...properties } = args;
