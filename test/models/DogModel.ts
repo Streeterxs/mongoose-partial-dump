@@ -1,10 +1,12 @@
 import mongoose, { Document, Types } from 'mongoose';
 
 const { ObjectId } = mongoose.Schema.Types;
-export interface IDog extends Document {
+export interface IDog {
     name: string;
     toys: Types.ObjectId[];
 }
+
+export type IDogDocument = IDog & Document;
 const dogSchema = new mongoose.Schema(
     {
         name: {
@@ -21,4 +23,4 @@ const dogSchema = new mongoose.Schema(
     { collection: 'Dog' }
 );
 
-export default mongoose.model<IDog>('Dog', dogSchema);
+export default mongoose.model<IDogDocument>('Dog', dogSchema);
