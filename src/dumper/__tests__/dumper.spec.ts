@@ -146,7 +146,7 @@ it('show copy values for a Dog and a DogOwner', async () => {
 });
 
 // TODO implement deep partial dump to fix that test
-it.skip('show copy values for a Dog, DogOwner and PetShopClient', async () => {
+it('show copy values for a Dog, DogOwner and PetShopClient', async () => {
     const dog = await createDog({ name: 'Blackie' });
     const person = await createPerson({ name: 'Charlinhos' });
     const dogOwner = await createDogOwner({ dog: dog._id, person: person._id });
@@ -184,9 +184,7 @@ it.skip('show copy values for a Dog, DogOwner and PetShopClient', async () => {
     expect(dupGenerated['DogOwner'][0].dog).toEqual(dog._id);
 
     expect(dupGenerated['PetShopClient']).toHaveLength(1);
-    expect(dupGenerated['PetShopClient'][0]._id).toEqual(
-        petShopClient._id.toString()
-    );
+    expect(dupGenerated['PetShopClient'][0]._id).toEqual(petShopClient._id);
     expect(dupGenerated['PetShopClient'][0].petShop).toEqual(petShop._id);
     expect(dupGenerated['PetShopClient'][0].dogOwner).toEqual(dogOwner._id);
 });

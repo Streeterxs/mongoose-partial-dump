@@ -1,5 +1,9 @@
 import mongoose, { Types } from 'mongoose';
-import { collectionsToDuplicate, getRefPaths } from './collectionsToDuplicate';
+import {
+    collectionsToDuplicate,
+    getRefPaths,
+    getSchemaPathsAndKeys,
+} from './collectionsToDuplicate';
 
 type getPayloadType = (
     collectionName: string
@@ -15,6 +19,7 @@ type DumperInput = {
     collectionObjectId?: string;
     getPayload?: getPayloadType;
     fieldsToRemove?: string[];
+    dump?: any;
 };
 
 export const dumper = async ({
@@ -22,12 +27,11 @@ export const dumper = async ({
     collectionObjectId,
     getPayload,
     fieldsToRemove,
+    dump = {},
 }: DumperInput) => {
     const principalModel = mongoose.model(collectionName);
     const principalCollectionName = principalModel.collection.collectionName;
     const collections = collectionsToDuplicate(collectionName);
-
-    const dump = {};
 
     const conditions = getConditions({
         collectionName,
@@ -40,6 +44,13 @@ export const dumper = async ({
         if (!(principalCollectionName in dump)) {
             dump[principalCollectionName] = [];
         }
+        const docAlreadyDumped = dump[principalCollectionName].filter(
+            ({ _id }) => _id.toString() === doc._id.toString()
+        );
+        if (docAlreadyDumped.length > 0) {
+            continue;
+        }
+
         dump[principalCollectionName] = getDumpByDoc({
             dump,
             collectionName: principalCollectionName,
@@ -50,6 +61,9 @@ export const dumper = async ({
 
     for (const model of collections) {
         const collectionName = model.collection.collectionName;
+        const recursiveCollectionsToDuplicate = collectionsToDuplicate(
+            collectionName
+        );
 
         const conditions = getConditions({
             collectionName,
@@ -59,10 +73,16 @@ export const dumper = async ({
             principalModel,
         });
 
-        console.log('conditions: ', conditions);
         for await (const doc of model.find(conditions).lean()) {
             if (!(collectionName in dump)) {
                 dump[collectionName] = [];
+            }
+
+            const docAlreadyDumped = dump[principalCollectionName].filter(
+                ({ _id }) => _id.toString() === doc._id.toString()
+            );
+            if (docAlreadyDumped.length > 0) {
+                continue;
             }
             dump[collectionName] = getDumpByDoc({
                 dump,
@@ -70,6 +90,16 @@ export const dumper = async ({
                 fieldsToRemove,
                 doc,
             });
+
+            if (recursiveCollectionsToDuplicate.length > 0) {
+                dump = await dumper({
+                    collectionName,
+                    collectionObjectId: doc._id.toString(),
+                    getPayload,
+                    fieldsToRemove,
+                    dump,
+                });
+            }
         }
     }
 
@@ -120,6 +150,13 @@ const getConditions = ({
         }
     }
 
+    const { pathsKeys } = getSchemaPathsAndKeys(model);
+    const conditionKeys = Object.keys(conditions);
+    for (const conditionKey of conditionKeys) {
+        if (!pathsKeys.includes(conditionKey)) {
+            delete conditions[conditionKey];
+        }
+    }
     return conditions;
 };
 
