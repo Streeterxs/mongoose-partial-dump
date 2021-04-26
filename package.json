@@ -1,5 +1,5 @@
 {
-  "name": "cool-partial-dumper",
+  "name": "mongoose-partial-dumper",
   "version": "1.0.0",
   "description": "A package to help mongoose users to partially dump models of your db",
   "main": "index.js",
