@@ -1,13 +1,6 @@
 import mongoose, { Types } from 'mongoose';
 
-const getModelObject = (
-    model: mongoose.Model<any>,
-    id: string | Types.ObjectId
-) => {
-    return model.findOne({ _id: id });
-};
-
-const getSchemaPathsAndKeys = (model: mongoose.Model<any>) => {
+export const getSchemaPathsAndKeys = (model: mongoose.Model<any>) => {
     const { paths } = model.schema;
     const pathsKeys = Object.keys(paths);
 
