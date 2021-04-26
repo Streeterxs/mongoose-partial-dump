@@ -53,6 +53,23 @@ it('show copy values for a dog and a petshop', async () => {
     expect(dupGenerated['PetShop'][0].dogs).toEqual([dog._id]);
 });
 
+it('show copy values for a dog and a petshop by dog id', async () => {
+    const dog = await new Dog({ name: 'Blackie' }).save();
+    await new PetShop({ name: 'Local Peties', dogs: [dog._id] }).save();
+
+    const dupGenerated = await dumper({
+        collectionName: 'Dog',
+        collectionObjectId: dog._id,
+    });
+
+    expect(dupGenerated['Dog']).toHaveLength(1);
+    expect(dupGenerated['Dog'][0].name).toEqual('Blackie');
+
+    expect(dupGenerated['PetShop']).toHaveLength(1);
+    expect(dupGenerated['PetShop'][0].name).toEqual('Local Peties');
+    expect(dupGenerated['PetShop'][0].dogs).toEqual([dog._id]);
+});
+
 it('show copy values based on dog model, bring all petshop related', async () => {
     const blackie = await new Dog({ name: 'Blackie' }).save();
     const whitie = await new Dog({ name: 'Whitie' }).save();
