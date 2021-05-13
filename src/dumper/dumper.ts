@@ -40,7 +40,8 @@ export const dumper = async ({
       getPayload,
    });
 
-   for await (const doc of mainModel.find(conditions).lean()) {
+   const mainDocs = mainModel.find(conditions).lean();
+   for await (const doc of mainDocs) {
       if (!(mainCollectionName in dump)) {
          dump[mainCollectionName] = [];
       }
@@ -51,12 +52,14 @@ export const dumper = async ({
          continue;
       }
 
-      dump[mainCollectionName] = getDumpByDoc({
-         dump,
-         collectionName: mainCollectionName,
+      const docWithoutFields = removeFields({
          fieldsToRemove,
          doc,
       });
+      dump[mainCollectionName] = [
+         ...dump[mainCollectionName],
+         docWithoutFields,
+      ];
    }
 
    for (const model of collections) {
@@ -81,15 +84,16 @@ export const dumper = async ({
          const docAlreadyDumped = dump[mainCollectionName].filter(
             ({ _id }) => _id.toString() === doc._id.toString()
          );
+
          if (docAlreadyDumped.length > 0) {
             continue;
          }
-         dump[collectionName] = getDumpByDoc({
-            dump,
-            collectionName,
+
+         const docWithoutFields = removeFields({
             fieldsToRemove,
             doc,
          });
+         dump[collectionName] = [...dump[collectionName], docWithoutFields];
 
          if (recursiveCollectionsToDuplicate.length > 0) {
             dump = await dumper({
@@ -186,22 +190,16 @@ const getIdConditions = ({
    return conditions;
 };
 
-type getDumpByDocInput = {
-   dump: any;
-   collectionName: string;
+type removeFieldsInput = {
    fieldsToRemove: string[];
    doc: any;
 };
-const getDumpByDoc = ({
-   dump,
-   collectionName,
-   fieldsToRemove,
-   doc,
-}: getDumpByDocInput) => {
+const removeFields = ({ fieldsToRemove, doc }: removeFieldsInput) => {
    if (fieldsToRemove) {
       for (const field of fieldsToRemove) {
          doc[field] = null;
       }
    }
-   return [...dump[collectionName], doc];
+
+   return doc;
 };
