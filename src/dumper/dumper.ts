@@ -1,207 +1,207 @@
 import mongoose, { Types } from 'mongoose';
 import {
-    collectionsToDuplicate,
-    getRefPaths,
-    getSchemaPathsAndKeys,
+   collectionsToDuplicate,
+   getRefPaths,
+   getSchemaPathsAndKeys,
 } from './collectionsToDuplicate';
 
 type getPayloadType = (
-    collectionName: string
+   collectionName: string
 ) => {
-    [arg: string]:
-        | string
-        | Types.ObjectId
-        | { $in: string[] | Types.ObjectId[] }
-        | undefined;
+   [arg: string]:
+      | string
+      | Types.ObjectId
+      | { $in: string[] | Types.ObjectId[] }
+      | undefined;
 };
 type DumperInput = {
-    collectionName: string;
-    collectionObjectId?: string;
-    getPayload?: getPayloadType;
-    fieldsToRemove?: string[];
-    dump?: any;
+   collectionName: string;
+   collectionObjectId?: string;
+   getPayload?: getPayloadType;
+   fieldsToRemove?: string[];
+   dump?: any;
 };
 
 export const dumper = async ({
-    collectionName,
-    collectionObjectId,
-    getPayload,
-    fieldsToRemove,
-    dump = {},
+   collectionName,
+   collectionObjectId,
+   getPayload,
+   fieldsToRemove,
+   dump = {},
 }: DumperInput) => {
-    const principalModel = mongoose.model(collectionName);
-    const principalCollectionName = principalModel.collection.collectionName;
-    const collections = collectionsToDuplicate(collectionName);
+   const mainModel = mongoose.model(collectionName);
+   const mainCollectionName = mainModel.collection.collectionName;
+   const collections = collectionsToDuplicate(collectionName);
 
-    const conditions = getConditions({
-        collectionName,
-        model: principalModel,
-        collectionObjectId,
-        getPayload,
-    });
+   const conditions = getConditions({
+      collectionName,
+      model: mainModel,
+      collectionObjectId,
+      getPayload,
+   });
 
-    for await (const doc of principalModel.find(conditions).lean()) {
-        if (!(principalCollectionName in dump)) {
-            dump[principalCollectionName] = [];
-        }
-        const docAlreadyDumped = dump[principalCollectionName].filter(
+   for await (const doc of mainModel.find(conditions).lean()) {
+      if (!(mainCollectionName in dump)) {
+         dump[mainCollectionName] = [];
+      }
+      const docAlreadyDumped = dump[mainCollectionName].filter(
+         ({ _id }) => _id.toString() === doc._id.toString()
+      );
+      if (docAlreadyDumped.length > 0) {
+         continue;
+      }
+
+      dump[mainCollectionName] = getDumpByDoc({
+         dump,
+         collectionName: mainCollectionName,
+         fieldsToRemove,
+         doc,
+      });
+   }
+
+   for (const model of collections) {
+      const collectionName = model.collection.collectionName;
+      const recursiveCollectionsToDuplicate = collectionsToDuplicate(
+         collectionName
+      );
+
+      const conditions = getConditions({
+         collectionName,
+         model,
+         collectionObjectId,
+         getPayload,
+         mainModel,
+      });
+
+      for await (const doc of model.find(conditions).lean()) {
+         if (!(collectionName in dump)) {
+            dump[collectionName] = [];
+         }
+
+         const docAlreadyDumped = dump[mainCollectionName].filter(
             ({ _id }) => _id.toString() === doc._id.toString()
-        );
-        if (docAlreadyDumped.length > 0) {
+         );
+         if (docAlreadyDumped.length > 0) {
             continue;
-        }
-
-        dump[principalCollectionName] = getDumpByDoc({
+         }
+         dump[collectionName] = getDumpByDoc({
             dump,
-            collectionName: principalCollectionName,
+            collectionName,
             fieldsToRemove,
             doc,
-        });
-    }
+         });
 
-    for (const model of collections) {
-        const collectionName = model.collection.collectionName;
-        const recursiveCollectionsToDuplicate = collectionsToDuplicate(
-            collectionName
-        );
-
-        const conditions = getConditions({
-            collectionName,
-            model,
-            collectionObjectId,
-            getPayload,
-            principalModel,
-        });
-
-        for await (const doc of model.find(conditions).lean()) {
-            if (!(collectionName in dump)) {
-                dump[collectionName] = [];
-            }
-
-            const docAlreadyDumped = dump[principalCollectionName].filter(
-                ({ _id }) => _id.toString() === doc._id.toString()
-            );
-            if (docAlreadyDumped.length > 0) {
-                continue;
-            }
-            dump[collectionName] = getDumpByDoc({
-                dump,
-                collectionName,
-                fieldsToRemove,
-                doc,
+         if (recursiveCollectionsToDuplicate.length > 0) {
+            dump = await dumper({
+               collectionName,
+               collectionObjectId: doc._id.toString(),
+               getPayload,
+               fieldsToRemove,
+               dump,
             });
+         }
+      }
+   }
 
-            if (recursiveCollectionsToDuplicate.length > 0) {
-                dump = await dumper({
-                    collectionName,
-                    collectionObjectId: doc._id.toString(),
-                    getPayload,
-                    fieldsToRemove,
-                    dump,
-                });
-            }
-        }
-    }
+   //eslint-disable-next-line
+   console.log('dump: ', dump);
 
-    //eslint-disable-next-line
-    console.log('dump: ', dump);
-
-    return dump;
+   return dump;
 };
 
 type getConditionsInput = {
-    collectionName: string;
-    model: mongoose.Model<any>;
-    collectionObjectId?: string;
-    getPayload?: getPayloadType;
-    principalModel?: mongoose.Model<any>;
+   collectionName: string;
+   model: mongoose.Model<any>;
+   collectionObjectId?: string;
+   getPayload?: getPayloadType;
+   mainModel?: mongoose.Model<any>;
 };
 const getConditions = ({
-    collectionName,
-    model,
-    collectionObjectId,
-    getPayload,
-    principalModel,
+   collectionName,
+   model,
+   collectionObjectId,
+   getPayload,
+   mainModel,
 }: getConditionsInput) => {
-    let conditions = {};
+   let conditions = {};
 
-    if (getPayload) {
-        conditions = {
+   if (getPayload) {
+      conditions = {
+         ...conditions,
+         ...getPayload(collectionName),
+      };
+   }
+
+   if (collectionObjectId) {
+      if (!mainModel) {
+         conditions = {
             ...conditions,
-            ...getPayload(collectionName),
-        };
-    }
+            _id: collectionObjectId,
+         };
+      } else {
+         conditions = {
+            ...conditions,
+            ...getIdConditions({
+               collectionObjectId,
+               model,
+               mainModel,
+            }),
+         };
+      }
+   }
 
-    if (collectionObjectId) {
-        if (!principalModel) {
-            conditions = {
-                ...conditions,
-                _id: collectionObjectId,
-            };
-        } else {
-            conditions = {
-                ...conditions,
-                ...getIdConditions({
-                    collectionObjectId,
-                    model,
-                    principalModel,
-                }),
-            };
-        }
-    }
-
-    const { pathsKeys } = getSchemaPathsAndKeys(model);
-    const conditionKeys = Object.keys(conditions);
-    for (const conditionKey of conditionKeys) {
-        if (!pathsKeys.includes(conditionKey)) {
-            delete conditions[conditionKey];
-        }
-    }
-    return conditions;
+   const { pathsKeys } = getSchemaPathsAndKeys(model);
+   const conditionKeys = Object.keys(conditions);
+   for (const conditionKey of conditionKeys) {
+      if (!pathsKeys.includes(conditionKey)) {
+         delete conditions[conditionKey];
+      }
+   }
+   return conditions;
 };
 
 type getIdConditionInput = {
-    collectionObjectId: string | Types.ObjectId;
-    model: mongoose.Model<any>;
-    principalModel?: mongoose.Model<any>;
+   collectionObjectId: string | Types.ObjectId;
+   model: mongoose.Model<any>;
+   mainModel?: mongoose.Model<any>;
 };
 const getIdConditions = ({
-    collectionObjectId,
-    model,
-    principalModel,
+   collectionObjectId,
+   model,
+   mainModel,
 }: getIdConditionInput) => {
-    if (!principalModel) {
-        return { _id: collectionObjectId };
-    }
+   if (!mainModel) {
+      return { _id: collectionObjectId };
+   }
 
-    let conditions = {};
+   let conditions = {};
 
-    const refPaths = getRefPaths(model, principalModel);
-    for (const path of refPaths) {
-        conditions = {
-            ...conditions,
-            [path]: collectionObjectId,
-        };
-    }
-    return conditions;
+   const refPaths = getRefPaths(model, mainModel);
+   for (const path of refPaths) {
+      conditions = {
+         ...conditions,
+         [path]: collectionObjectId,
+      };
+   }
+   return conditions;
 };
 
 type getDumpByDocInput = {
-    dump: any;
-    collectionName: string;
-    fieldsToRemove: string[];
-    doc: any;
+   dump: any;
+   collectionName: string;
+   fieldsToRemove: string[];
+   doc: any;
 };
 const getDumpByDoc = ({
-    dump,
-    collectionName,
-    fieldsToRemove,
-    doc,
+   dump,
+   collectionName,
+   fieldsToRemove,
+   doc,
 }: getDumpByDocInput) => {
-    if (fieldsToRemove) {
-        for (const field of fieldsToRemove) {
-            doc[field] = null;
-        }
-    }
-    return [...dump[collectionName], doc];
+   if (fieldsToRemove) {
+      for (const field of fieldsToRemove) {
+         doc[field] = null;
+      }
+   }
+   return [...dump[collectionName], doc];
 };
