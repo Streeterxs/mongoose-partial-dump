@@ -1,6 +1,12 @@
 import mongoose from 'mongoose';
-import { collectionsToDuplicate } from './collectionsToDuplicate';
-import { getConditions, getPayloadType, removeFields } from './utils';
+
+import { collectionsToDuplicate, getAllRefPath, RefPath } from './mongoUtils';
+import {
+   dumperHasDocument,
+   getConditions,
+   getPayloadType,
+   removeFields,
+} from './dumperUtils';
 
 type DumperInput = {
    collectionName: string;
@@ -32,10 +38,13 @@ export const dumper = async ({
       if (!(mainCollectionName in dump)) {
          dump[mainCollectionName] = [];
       }
-      const docAlreadyDumped = dump[mainCollectionName].filter(
-         ({ _id }) => _id.toString() === doc._id.toString()
-      );
-      if (docAlreadyDumped.length > 0) {
+
+      const docAlreadyDumped = dumperHasDocument({
+         dump,
+         collectionName: mainCollectionName,
+         id: doc._id,
+      });
+      if (docAlreadyDumped) {
          continue;
       }
 
@@ -68,13 +77,21 @@ export const dumper = async ({
             dump[collectionName] = [];
          }
 
-         const docAlreadyDumped = dump[mainCollectionName].filter(
-            ({ _id }) => _id.toString() === doc._id.toString()
-         );
-
-         if (docAlreadyDumped.length > 0) {
+         const docAlreadyDumped = dumperHasDocument({
+            dump,
+            collectionName,
+            id: doc._id,
+         });
+         if (docAlreadyDumped) {
             continue;
          }
+
+         await populateDumpWithRefDocs({
+            dump,
+            collectionName,
+            fieldsToRemove,
+            doc,
+         });
 
          const docWithoutFields = removeFields({
             fieldsToRemove,
@@ -98,4 +115,51 @@ export const dumper = async ({
    console.log('dump: ', dump);
 
    return dump;
+};
+
+type populateDumpWithRefDocsInput = {
+   dump: any;
+   doc: any;
+   collectionName: string;
+   fieldsToRemove: any;
+};
+const populateDumpWithRefDocs = async ({
+   dump,
+   doc,
+   collectionName,
+   fieldsToRemove,
+}: populateDumpWithRefDocsInput) => {
+   const allRefPaths = getAllRefPath(collectionName);
+
+   for (const refPath of allRefPaths) {
+      if (!(refPath.collection in dump)) {
+         dump[refPath.collection] = [];
+      }
+      const refPathModel = mongoose.model(refPath.collection);
+      const docRefPath = await refPathModel.findOne({
+         _id: doc[refPath.pathKey],
+      });
+
+      if (!(refPath.collection in dump)) {
+         dump[refPath.collection] = [];
+      }
+
+      const docRefPathAlreadyDumped = dumperHasDocument({
+         dump,
+         collectionName: refPath.collection,
+         id: docRefPath._id,
+      });
+      if (docRefPathAlreadyDumped) {
+         continue;
+      }
+      const docRefPathWithoutFields = removeFields({
+         fieldsToRemove,
+         doc: docRefPath,
+      });
+
+      dump[refPath.collection] = [
+         ...dump[refPath.collection],
+         docRefPathWithoutFields,
+      ];
+   }
 };

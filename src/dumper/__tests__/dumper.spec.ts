@@ -214,3 +214,81 @@ it('show copy values for a Dog, DogOwner and PetShopClient with dog id', async (
    expect(dupGenerated['PetShopClient'][0].petShop).toEqual(petShop._id);
    expect(dupGenerated['PetShopClient'][0].dogOwner).toEqual(dogOwner._id);
 });
+
+it('should dump direct ref documents [dog, dogowner and person]', async () => {
+   const dog = await createDog({ name: 'Blackie' });
+   const person = await createPerson({ name: 'Charlinhos' });
+   await createDogOwner({ dog: dog._id, person: person._id });
+
+   const dupGenerated = await dumper({
+      collectionName: 'Dog',
+      collectionObjectId: dog._id,
+   });
+   expect(dupGenerated['Dog']).toHaveLength(1);
+   expect(dupGenerated['Dog'][0].name).toEqual('Blackie');
+
+   expect(dupGenerated['DogOwner']).toHaveLength(1);
+   expect(dupGenerated['DogOwner'][0].person).toEqual(person._id);
+   expect(dupGenerated['DogOwner'][0].dog).toEqual(dog._id);
+
+   expect(dupGenerated['Person']).toHaveLength(1);
+   expect(dupGenerated['Person'][0]._id).toEqual(person._id);
+   expect(dupGenerated['Person'][0].name).toEqual('Charlinhos');
+});
+
+it('should dump direct ref documents [dog, dogowner, person, petShopCliend and petShop]', async () => {
+   const dog = await createDog({ name: 'Blackie' });
+   const person = await createPerson({ name: 'Charlinhos' });
+   const dogOwner = await createDogOwner({ dog: dog._id, person: person._id });
+   const petShop = await createPetShop({ dogs: [dog._id] });
+   const petShopClient = await createPetShopClient({
+      petShop: petShop._id,
+      dogOwner: dogOwner._id,
+   });
+
+   console.log('petShop: ', petShop);
+   const dupGenerated = await dumper({
+      collectionName: 'Dog',
+      collectionObjectId: dog._id,
+   });
+   expect(dupGenerated['Dog']).toHaveLength(1);
+   expect(dupGenerated['Dog'][0].name).toEqual('Blackie');
+
+   expect(dupGenerated['DogOwner']).toHaveLength(1);
+   expect(dupGenerated['DogOwner'][0].person).toEqual(person._id);
+   expect(dupGenerated['DogOwner'][0].dog).toEqual(dog._id);
+
+   expect(dupGenerated['Person']).toHaveLength(1);
+   expect(dupGenerated['Person'][0]._id).toEqual(person._id);
+   expect(dupGenerated['Person'][0].name).toEqual('Charlinhos');
+
+   expect(dupGenerated['PetShopClient']).toHaveLength(1);
+   expect(dupGenerated['PetShopClient'][0]._id).toEqual(petShopClient._id);
+   expect(dupGenerated['PetShopClient'][0].petShop).toEqual(petShop._id);
+   expect(dupGenerated['PetShopClient'][0].dogOwner).toEqual(dogOwner._id);
+
+   expect(dupGenerated['PetShop']).toHaveLength(1);
+   expect(dupGenerated['PetShop'][0]._id).toEqual(petShop._id);
+});
+
+// TODO fix array ref types dump
+it.skip('should dump ref path petshop with path type array populated', async () => {
+   const dog = await createDog({ name: 'Blackie' });
+   const person = await createPerson({ name: 'Charlinhos' });
+   const dogOwner = await createDogOwner({ dog: dog._id, person: person._id });
+   const petShop = await createPetShop({ dogs: [dog._id] });
+   const petShopClient = await createPetShopClient({
+      petShop: petShop._id,
+      dogOwner: dogOwner._id,
+   });
+
+   console.log('petShop: ', petShop);
+   const dupGenerated = await dumper({
+      collectionName: 'Dog',
+      collectionObjectId: dog._id,
+   });
+
+   expect(dupGenerated['PetShop']).toHaveLength(1);
+   expect(dupGenerated['PetShop'][0]._id).toEqual(petShop._id);
+   expect(dupGenerated['PetShop'][0].dogs).toEqual([dog._id]);
+});
