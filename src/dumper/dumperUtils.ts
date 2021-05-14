@@ -1,5 +1,5 @@
 import mongoose, { Types } from 'mongoose';
-import { getRefPaths, getSchemaPathsAndKeys } from './collectionsToDuplicate';
+import { getRefPaths, getSchemaPathsAndKeys } from './mongoUtils';
 
 export type getPayloadType = (
    collectionName: string
@@ -93,4 +93,25 @@ export const removeFields = ({ fieldsToRemove, doc }: removeFieldsInput) => {
    }
 
    return doc;
+};
+
+type dumperHasDocumentInput = {
+   dump: any;
+   collectionName: string;
+   id: Types.ObjectId;
+};
+export const dumperHasDocument = ({
+   dump,
+   collectionName,
+   id,
+}: dumperHasDocumentInput): boolean => {
+   const docAlreadyDumped = dump[collectionName].filter(
+      ({ _id }) => _id.toString() === id.toString()
+   );
+
+   if (docAlreadyDumped.length > 0) {
+      return true;
+   }
+
+   return false;
 };
