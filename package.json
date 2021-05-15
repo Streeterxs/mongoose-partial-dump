@@ -7,16 +7,22 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "delete:node_modules": "find . -name \"node_modules\" -exec rm -rf '{}' +",
     "jest": "jest --no-cache --detectOpenHandles",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "prebuild": "eslint --fix tsconfig.json --fix",
+    "babel": "babel-node --extensions \".es6,.js,.es,.jsx,.mjs,.ts,.tsx\"",
+    "build": "npm run clear && babel src --extensions \".es6,.js,.es,.jsx,.mjs,.ts\" --ignore *.test.js --out-dir build --copy-files",
+    "clear": "rimraf ./build"
   },
   "author": "Afonso Araújo Neto",
   "license": "ISC",
   "dependencies": {
     "@babel/runtime": "^7.13.10",
     "eslint-plugin-no-only-tests": "^2.4.0",
-    "mongoose": "^5.12.0"
+    "mongoose": "^5.12.0",
+    "yargs": "^17.0.0-candidate.13"
   },
   "devDependencies": {
+    "@babel/cli": "^7.13.10",
     "@babel/core": "^7.13.10",
     "@babel/node": "^7.13.10",
     "@babel/plugin-transform-modules-commonjs": "^7.13.8",
@@ -24,6 +30,7 @@
     "@babel/preset-typescript": "^7.10.4",
     "@types/jest": "26.0.20",
     "@types/mongoose": "5.10.3",
+    "@types/yargs": "^16.0.1",
     "@typescript-eslint/eslint-plugin": "4.18.0",
     "@typescript-eslint/parser": "4.18.0",
     "babel-jest": "26.6.3",
@@ -36,6 +43,9 @@
     "mongodb-memory-server": "^6.9.6",
     "prettier": "~2.2.1",
     "typescript": "4.2.3"
+  },
+  "bin": {
+    "partial": "./build/cli/dump.js"
   },
   "lint-staged": {
     "*.{js,ts}": "eslint --fix",

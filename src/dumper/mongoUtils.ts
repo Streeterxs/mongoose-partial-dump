@@ -11,6 +11,9 @@ export const getSchemaPathsAndKeys = (model: mongoose.Model<any>) => {
 };
 
 const getAllModels = () => {
+   const connection = mongoose.connection;
+   console.log('connection: ', connection);
+   console.log('connection.models: ', connection.models);
    return mongoose.connection.models;
 };
 
