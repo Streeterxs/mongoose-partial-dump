@@ -271,8 +271,7 @@ it('should dump direct ref documents [dog, dogowner, person, petShopCliend and p
    expect(dupGenerated['PetShop'][0]._id).toEqual(petShop._id);
 });
 
-// TODO fix array ref types dump
-it.skip('should dump ref path petshop with path type array populated', async () => {
+it('should dump ref path petshop with path type array populated', async () => {
    const dog = await createDog({ name: 'Blackie' });
    const person = await createPerson({ name: 'Charlinhos' });
    const dogOwner = await createDogOwner({ dog: dog._id, person: person._id });
@@ -291,4 +290,24 @@ it.skip('should dump ref path petshop with path type array populated', async () 
    expect(dupGenerated['PetShop']).toHaveLength(1);
    expect(dupGenerated['PetShop'][0]._id).toEqual(petShop._id);
    expect(dupGenerated['PetShop'][0].dogs).toEqual([dog._id]);
+});
+
+it('should dump ref paths before hasDoc check of collections', async () => {
+   const dog = await createDog({ name: 'Blackie' });
+   const person = await createPerson({ name: 'Charlinhos' });
+   const dogOwner = await createDogOwner({ dog: dog._id, person: person._id });
+   const petShop = await createPetShop({ dogs: [dog._id] });
+   await createPetShopClient({
+      petShop: petShop._id,
+      dogOwner: dogOwner._id,
+   });
+
+   const dupGenerated = await dumper({
+      collectionName: 'Dog',
+      collectionObjectId: dog._id,
+   });
+
+   expect(dupGenerated['Person']).toHaveLength(1);
+   expect(dupGenerated['Person'][0]._id).toEqual(person._id);
+   expect(dupGenerated['Person'][0].name).toEqual('Charlinhos');
 });

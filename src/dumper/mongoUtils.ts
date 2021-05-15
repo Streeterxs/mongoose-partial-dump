@@ -23,7 +23,6 @@ export const getRefPaths = (
 
    for (const path of pathsKeys) {
       if (paths[path]?.options.ref === refModel.collection.collectionName) {
-         console.log('paths[path]?.options: ', paths[path]?.options);
          refPathsKeys = [path];
          break;
       }
@@ -57,7 +56,7 @@ const getAllRefModelsByCollection = (collectionName: string) => {
    const allModels = getAllModels();
    const modelsIndexes = Object.keys(allModels);
 
-   let refModels = [];
+   let refModels: mongoose.Model<any, any>[] = [];
 
    for (const modelIndex of modelsIndexes) {
       const model = allModels[modelIndex];
