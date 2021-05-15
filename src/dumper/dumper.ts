@@ -77,6 +77,13 @@ export const dumper = async ({
             dump[collectionName] = [];
          }
 
+         await populateDumpWithRefDocs({
+            dump,
+            collectionName,
+            fieldsToRemove,
+            doc,
+         });
+
          const docAlreadyDumped = dumperHasDocument({
             dump,
             collectionName,
@@ -85,13 +92,6 @@ export const dumper = async ({
          if (docAlreadyDumped) {
             continue;
          }
-
-         await populateDumpWithRefDocs({
-            dump,
-            collectionName,
-            fieldsToRemove,
-            doc,
-         });
 
          const docWithoutFields = removeFields({
             fieldsToRemove,
