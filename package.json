@@ -1,6 +1,6 @@
 {
   "name": "mongoose-partial-dumper",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "A package to help mongoose users to partially dump models of your db",
   "main": "index.js",
   "scripts": {
@@ -11,12 +11,15 @@
     "prebuild": "eslint --fix tsconfig.json --fix",
     "babel": "babel-node --extensions \".es6,.js,.es,.jsx,.mjs,.ts,.tsx\"",
     "build": "npm run clear && babel src --extensions \".es6,.js,.es,.jsx,.mjs,.ts\" --ignore *.test.js --out-dir build --copy-files",
+    "build:linux:admin": "yarn build && chmod +x build/cli/dump.js",
     "clear": "rimraf ./build"
   },
   "author": "Afonso Araújo Neto",
   "license": "ISC",
   "dependencies": {
     "@babel/runtime": "^7.13.10",
+    "@endemolshinegroup/cosmiconfig-typescript-loader": "^3.0.2",
+    "cosmiconfig": "^7.0.0",
     "eslint-plugin-no-only-tests": "^2.4.0",
     "mongoose": "^5.12.0",
     "yargs": "^17.0.0-candidate.13"

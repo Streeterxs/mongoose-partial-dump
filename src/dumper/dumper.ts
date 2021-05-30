@@ -22,6 +22,7 @@ export const dumper = async ({
    fieldsToRemove,
    dump = {},
 }: DumperInput) => {
+   console.log('dumper running :)');
    const mainModel = mongoose.model(collectionName);
    const mainCollectionName = mainModel.collection.collectionName;
    const collections = collectionsToDuplicate(collectionName);

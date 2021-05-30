@@ -65,8 +65,9 @@ export const getIdConditions = ({
    model,
    mainModel,
 }: getIdConditionInput) => {
+   const objectId = new Types.ObjectId(collectionObjectId);
    if (!mainModel) {
-      return { _id: collectionObjectId };
+      return { _id: objectId };
    }
 
    let conditions = {};
