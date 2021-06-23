@@ -21,12 +21,14 @@ export const databaseTestModule = () => {
       };
 
       await mongoose.connect(uri, mongooseOpts);
+      console.log({ connections: mongoose.connections });
    };
 
    /**
     * Drop database, close the connection and stop mongod.
     */
    const closeDatabase = async () => {
+      console.log({ connections: mongoose.connections });
       await mongoose.connection.dropDatabase();
       await mongoose.connection.close();
       await mongod.stop();
