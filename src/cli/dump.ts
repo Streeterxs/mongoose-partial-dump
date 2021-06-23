@@ -7,7 +7,7 @@ import { dumper } from '../dumper/dumper';
 import { modelToSchema } from '../database/modelToSchema';
 
 import mongoose from 'mongoose';
-import { configMapper, Configs } from '../configs/configMapper';
+import { getConfig, Configs } from '../configs/configMapper';
 
 const argv = yargs(hideBin(process.argv))
    .command(
@@ -21,13 +21,7 @@ console.log(argv._);
 
 (async () => {
    try {
-      const configName = 'partial-dumper';
-      const loadConfig = await configMapper(Configs.DUMP);
-      if (!loadConfig) {
-         return;
-      }
-
-      const config = await loadConfig(configName);
+      const config = await getConfig(Configs.DUMP);
       if (!config) {
          return;
       }
