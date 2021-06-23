@@ -2,12 +2,12 @@
 import yargs from 'yargs';
 
 import { hideBin } from 'yargs/helpers';
-import { loadConfig } from '../config/loadConfig';
 import { connectToDb } from '../database/database';
 import { dumper } from '../dumper/dumper';
 import { modelToSchema } from '../database/modelToSchema';
 
 import mongoose from 'mongoose';
+import { configMapper, Configs } from '../configs/configMapper';
 
 const argv = yargs(hideBin(process.argv))
    .command(
@@ -15,11 +15,22 @@ const argv = yargs(hideBin(process.argv))
       'Create a partial dump of a MongoDB database using mongoose'
    )
    .help().argv;
+console.log('argv: ', argv);
+console.log('(%d,%d)', argv.x, argv.y);
+console.log(argv._);
 
 (async () => {
    try {
       const configName = 'partial-dumper';
+      const loadConfig = await configMapper(Configs.DUMP);
+      if (!loadConfig) {
+         return;
+      }
+
       const config = await loadConfig(configName);
+      if (!config) {
+         return;
+      }
 
       const { models } = config;
       for (const model of models) {
