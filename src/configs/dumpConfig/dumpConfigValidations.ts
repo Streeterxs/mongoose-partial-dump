@@ -6,8 +6,16 @@ type ConfigValidation<T> = {
    warning?: string;
 };
 export const dumpConfigValidations = (
-   config: Partial<DumpConfig>
+   config?: Partial<DumpConfig>
 ): ConfigValidation<DumpConfig> => {
+   if (!config) {
+      return {
+         error:
+            'Configuration file is missing. Example configuration file name: |partial-dump.config.js|',
+         config: null,
+      };
+   }
+
    if (!config.db) {
       return {
          error: '<db> configuration is missing',

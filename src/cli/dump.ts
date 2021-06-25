@@ -1,23 +1,12 @@
 #!/usr/bin/env node
-import yargs from 'yargs';
+import mongoose from 'mongoose';
 
-import { hideBin } from 'yargs/helpers';
 import { connectToDb } from '../database/database';
 import { dumper } from '../dumper/dumper';
 import { modelToSchema } from '../database/modelToSchema';
 
-import mongoose from 'mongoose';
 import { getConfig, Configs } from '../configs/configMapper';
-
-const argv = yargs(hideBin(process.argv))
-   .command(
-      'dump <collectionName> <id>',
-      'Create a partial dump of a MongoDB database using mongoose'
-   )
-   .help().argv;
-console.log('argv: ', argv);
-console.log('(%d,%d)', argv.x, argv.y);
-console.log(argv._);
+import { getDumpSanitizedArgv } from './dumpCli';
 
 (async () => {
    try {
@@ -36,9 +25,14 @@ console.log(argv._);
       }
       await connectToDb(config.db);
 
+      const sanitizedArgv = getDumpSanitizedArgv();
+      console.log({ sanitizedArgv });
+      if (!sanitizedArgv) {
+         return;
+      }
       await dumper({
-         collectionName: argv.collectionName,
-         collectionObjectId: argv.id,
+         collectionName: sanitizedArgv.collectionName,
+         collectionObjectId: sanitizedArgv.id,
       });
    } catch (err) {
       console.log('err: ', err);
