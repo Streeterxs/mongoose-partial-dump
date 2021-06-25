@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
 import { collectionsToDuplicate, getAllRefPath, RefPath } from './mongoUtils';
 import {
@@ -10,7 +10,7 @@ import {
 
 type DumperInput = {
    collectionName: string;
-   collectionObjectId?: string;
+   collectionObjectId?: Types.ObjectId | string;
    getPayload?: getPayloadType;
    fieldsToRemove?: string[];
    dump?: any;
@@ -111,9 +111,6 @@ export const dumper = async ({
          }
       }
    }
-
-   //eslint-disable-next-line
-   console.log('dump: ', dump);
 
    return dump;
 };

@@ -19,10 +19,12 @@ export const loadDumpConfig = async (
 
    if (!config) {
       if (error) {
-         throw new Error(error);
+         console.log(error);
+         return;
       }
 
-      throw new Error(`config is invalid`);
+      console.log(`config is invalid`);
+      return;
    }
 
    if (warning) {
