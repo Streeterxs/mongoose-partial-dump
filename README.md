@@ -50,3 +50,5 @@ This package will aid developers to create partial dumps of a mongoDB database u
 | --log  | string | If this option is given, no file will be generated, instead a log will show on console | **false** | 'User'   |
 
 ### Examples
+
+-  Mongoose partial dumper example - https://github.com/Streeterxs/mongoose-partial-dump (use the scripts in package.json to make your tests easier)
