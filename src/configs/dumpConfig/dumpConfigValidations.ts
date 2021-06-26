@@ -38,9 +38,34 @@ export const dumpConfigValidations = (
    }
 
    if (config.models.length < 1) {
+      if (!config.getPayload) {
+         return {
+            error: null,
+            warning:
+               '<models> config array do not have any models | <getPayload> config was not defined. You must input a ID on CLI for the dump work.',
+            config: {
+               db: config.db,
+               models: config.models,
+            },
+         };
+      }
+
       return {
          error: null,
          warning: '<models> config array do not have any models',
+         config: {
+            db: config.db,
+            models: config.models,
+            getPayload: config.getPayload,
+         },
+      };
+   }
+
+   if (!config.getPayload) {
+      return {
+         error: null,
+         warning:
+            '<getPayload> config was not defined. You must input a ID on CLI for the dump work.',
          config: {
             db: config.db,
             models: config.models,
@@ -53,6 +78,7 @@ export const dumpConfigValidations = (
       config: {
          db: config.db,
          models: config.models,
+         getPayload: config.getPayload,
       },
    };
 };
