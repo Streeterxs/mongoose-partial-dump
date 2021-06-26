@@ -38,50 +38,57 @@ const getDump = ({
    });
 };
 
+const getDumpObject = async () => {
+   const unvalidatedConfig = await getConfig(Configs.DUMP);
+   const unvalidatedArgv = getDumpSanitizedArgv();
+   return validateDumpCliConfig(unvalidatedArgv, unvalidatedConfig);
+};
+
+const dump = async () => {
+   const validatedDumpObj = await getDumpObject();
+   if (!validatedDumpObj) {
+      return;
+   }
+
+   const {
+      id,
+      getPayload,
+      models,
+      collectionName,
+      log,
+      db,
+      outputDir,
+   } = validatedDumpObj;
+
+   for (const model of models) {
+      const modelName = model.collection.name;
+      const schema = modelToSchema(model);
+      const collection = schema.get('collection');
+
+      mongoose.model(modelName, schema, collection);
+   }
+
+   await connectToDb(db);
+
+   const dump = await getDump({
+      collectionName,
+      collectionObjectId: id,
+      getPayload,
+   });
+
+   if (log) {
+      console.log({ ...dump });
+      return;
+   }
+
+   const stringfiedDump = JSON.stringify(dump);
+
+   fs.writeFileSync(outputDir, stringfiedDump);
+};
+
 (async () => {
    try {
-      const unvalidatedConfig = await getConfig(Configs.DUMP);
-      const unvalidatedArgv = getDumpSanitizedArgv();
-      const validatedDumpObj = validateDumpCliConfig(
-         unvalidatedArgv,
-         unvalidatedConfig
-      );
-      if (!validatedDumpObj) {
-         return;
-      }
-
-      const {
-         id,
-         getPayload,
-         models,
-         collectionName,
-         log,
-         db,
-         outputDir,
-      } = validatedDumpObj;
-
-      for (const model of models) {
-         const modelName = model.collection.name;
-         const schema = modelToSchema(model);
-         const collection = schema.get('collection');
-
-         mongoose.model(modelName, schema, collection);
-      }
-
-      await connectToDb(db);
-
-      const dump = await getDump({
-         collectionName,
-         collectionObjectId: id,
-         getPayload,
-      });
-
-      if (log) {
-         console.log({ ...dump });
-         return;
-      }
-
-      fs.writeFileSync(outputDir, dump);
+      await dump();
    } catch (err) {
       console.log('err: ', err);
    }

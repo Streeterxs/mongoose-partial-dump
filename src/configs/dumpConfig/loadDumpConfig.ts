@@ -23,11 +23,11 @@ export const loadDumpConfig = async (
    );
 
    if (warnings.length > 0) {
-      warnings.forEach(console.log);
+      warnings.forEach((warning) => console.log(warning));
    }
 
    if (errors.length > 0) {
-      errors.forEach(console.log);
+      errors.forEach((error) => console.log(error));
       return;
    }
    if (!config) {
