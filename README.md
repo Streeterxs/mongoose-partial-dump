@@ -6,6 +6,17 @@ This package will aid developers to create partial dumps of a mongoDB database u
 
 ### Inputs
 
+### Installation
+
+-  `npm install -g mongoose-partial-dumper`
+-  `npm install mongoose-partial-dumper`
+-  `yarn add mongoose-partial-dump`
+
+### Usage
+
+-  Create a partial-dump.config.{ts, js} file
+-  `yarn partial dump <collectionName> [id]`
+
 ### Strategies
 
 #### Default
