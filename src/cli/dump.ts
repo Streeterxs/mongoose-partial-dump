@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
 import { connectToDb } from '../database/database';
 import { dumper } from '../dumper/dumper';
@@ -7,15 +7,57 @@ import { modelToSchema } from '../database/modelToSchema';
 
 import { getConfig, Configs } from '../configs/configMapper';
 import { getDumpSanitizedArgv } from './dumpCli';
+import { validateDumpCliConfig } from './dumpValidations';
+import { getPayloadType } from '../dumper/dumperUtils';
 
-(async () => {
-   try {
-      const config = await getConfig(Configs.DUMP);
-      if (!config) {
+type getDumpInput = {
+   collectionName: string;
+   collectionObjectId?: Types.ObjectId;
+   getPayload?: getPayloadType;
+};
+const getDump = ({
+   collectionName,
+   collectionObjectId,
+   getPayload,
+}: getDumpInput) => {
+   if (!getPayload) {
+      if (!collectionObjectId) {
          return;
       }
 
-      const { models } = config;
+      return dumper({
+         collectionName,
+         collectionObjectId,
+      });
+   }
+
+   return dumper({
+      collectionName,
+      getPayload,
+   });
+};
+
+(async () => {
+   try {
+      const unvalidatedConfig = await getConfig(Configs.DUMP);
+      const unvalidatedArgv = getDumpSanitizedArgv();
+      const validatedDumpObj = validateDumpCliConfig(
+         unvalidatedArgv,
+         unvalidatedConfig
+      );
+      if (!validatedDumpObj) {
+         return;
+      }
+
+      const {
+         id,
+         getPayload,
+         models,
+         collectionName,
+         log,
+         db,
+      } = validatedDumpObj;
+
       for (const model of models) {
          const modelName = model.collection.name;
          const schema = modelToSchema(model);
@@ -23,17 +65,19 @@ import { getDumpSanitizedArgv } from './dumpCli';
 
          mongoose.model(modelName, schema, collection);
       }
-      await connectToDb(config.db);
 
-      const sanitizedArgv = getDumpSanitizedArgv();
-      console.log({ sanitizedArgv });
-      if (!sanitizedArgv) {
+      await connectToDb(db);
+
+      const dump = await getDump({
+         collectionName,
+         collectionObjectId: id,
+         getPayload,
+      });
+
+      if (log) {
+         console.log({ ...dump });
          return;
       }
-      await dumper({
-         collectionName: sanitizedArgv.collectionName,
-         collectionObjectId: sanitizedArgv.id,
-      });
    } catch (err) {
       console.log('err: ', err);
    }

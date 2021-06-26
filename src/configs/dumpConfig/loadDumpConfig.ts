@@ -3,10 +3,12 @@ import { Model } from 'mongoose';
 import { loadConfig } from '../loadConfig';
 import { DatabaseConfig } from '../../database/database';
 import { dumpConfigValidations } from './dumpConfigValidations';
+import { getPayloadType } from '../../dumper/dumperUtils';
 
 export type DumpConfig = {
    db: DatabaseConfig;
    models: Model<any>[];
+   getPayload?: getPayloadType;
 };
 
 export const loadDumpConfig = async (
