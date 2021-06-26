@@ -14,7 +14,7 @@ export const dumpConfigValidations = (
    if (!config) {
       return {
          errors: [
-            'Configuration file is missing. Example configuration file name: |partial-dump.config.js|',
+            'error: Configuration file is missing. Example configuration file name: |partial-dump.config.js|',
          ],
          warnings: [null],
          config: null,
@@ -57,7 +57,7 @@ export const dumpConfigValidations = (
 const dbConfigValidate = (db: DatabaseConfig | undefined) => {
    if (!db) {
       return {
-         error: '<db> configuration is missing',
+         error: 'error: <db> configuration is missing',
          warning: null,
          db: null,
       };
@@ -65,7 +65,7 @@ const dbConfigValidate = (db: DatabaseConfig | undefined) => {
 
    if (!db.url) {
       return {
-         error: '<db.url> configuration is missing',
+         error: 'error: <db.url> configuration is missing',
          warning: null,
          db: null,
       };
@@ -81,7 +81,7 @@ const dbConfigValidate = (db: DatabaseConfig | undefined) => {
 const modelsConfigValidate = (models: Model<any>[] | undefined) => {
    if (!models) {
       return {
-         error: '<models> configuration is missing',
+         error: 'error: <models> configuration is missing',
          warning: null,
          models: null,
       };
@@ -90,7 +90,7 @@ const modelsConfigValidate = (models: Model<any>[] | undefined) => {
    if (models.length < 1) {
       return {
          error: null,
-         warning: '<models> config array do not have any models',
+         warning: 'warning: <models> config array do not have any models',
          models,
       };
    }
@@ -107,7 +107,7 @@ const getPayloadConfigValidate = (getPayload: getPayloadType | undefined) => {
       return {
          error: null,
          warning:
-            '<getPayload> config was not defined. You must input a <id> on CLI for the dump work.',
+            'warning: <getPayload> config was not defined. You must input a <id> on CLI for the dump work.',
          db: null,
       };
    }
@@ -116,7 +116,7 @@ const getPayloadConfigValidate = (getPayload: getPayloadType | undefined) => {
       return {
          error: null,
          warning:
-            '<getPayload> config if defined, but not a function. This will cause a error if no <id> input was given on CLI.',
+            'warning: <getPayload> config if defined, but not a function. This will cause a error if no <id> input was given on CLI.',
          getPayload: null,
       };
    }
@@ -133,7 +133,7 @@ const outputDirConfigValidate = (outputDir: string | undefined) => {
       return {
          error: null,
          warning:
-            '<outputDir> config was not defined. You must input a <outputDir> on CLI for the dump work.',
+            'warning: <outputDir> config was not defined. You must input a <outputDir> on CLI for the dump work.',
          db: null,
       };
    }
@@ -142,7 +142,7 @@ const outputDirConfigValidate = (outputDir: string | undefined) => {
       return {
          error: null,
          warning:
-            '<outputDir> config if defined, but not a function. This will cause a error if no <outputDir> input was given on CLI.',
+            'warning: <outputDir> config if defined, but not a function. This will cause a error if no <outputDir> input was given on CLI.',
          outputDir: null,
       };
    }

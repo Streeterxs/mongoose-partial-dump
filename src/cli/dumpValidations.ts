@@ -32,19 +32,19 @@ export const validateDumpCliConfig = (
    config: void | Nullable<DumpConfig> | undefined
 ) => {
    if (!argv) {
-      console.log('Invalid given CLI arguments');
+      console.log('error: Invalid given CLI arguments');
       return;
    }
 
    if (!config) {
-      console.log('Invalid given CONFIG arguments');
+      console.log('error: Invalid given CONFIG arguments');
       return;
    }
 
    if (!argv.id) {
       if (!config.getPayload) {
          console.log(
-            'At least a CONFIG <getPayload> or a CLI <id> must me given'
+            'error: At least a CONFIG <getPayload> or a CLI <id> must me given'
          );
          return;
       }
@@ -53,7 +53,7 @@ export const validateDumpCliConfig = (
    if (!argv.outputDir) {
       if (!config.outputDir) {
          console.log(
-            'At least a CONFIG <outputDir> or a CLI <outputDir> must me given'
+            'error: At least a CONFIG <outputDir> or a CLI <outputDir> must me given'
          );
          return;
       }

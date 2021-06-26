@@ -1,6 +1,6 @@
 {
   "name": "mongoose-partial-dumper",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "A package to help mongoose users to partially dump models of your db",
   "main": "index.js",
   "scripts": {
