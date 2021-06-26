@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import fs from 'fs';
 import mongoose, { Types } from 'mongoose';
 
 import { connectToDb } from '../database/database';
@@ -56,6 +57,7 @@ const getDump = ({
          collectionName,
          log,
          db,
+         outputDir,
       } = validatedDumpObj;
 
       for (const model of models) {
@@ -78,6 +80,8 @@ const getDump = ({
          console.log({ ...dump });
          return;
       }
+
+      fs.writeFileSync(outputDir, dump);
    } catch (err) {
       console.log('err: ', err);
    }

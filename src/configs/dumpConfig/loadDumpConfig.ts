@@ -9,28 +9,30 @@ export type DumpConfig = {
    db: DatabaseConfig;
    models: Model<any>[];
    getPayload?: getPayloadType;
+   outputDir?: string;
 };
 
 export const loadDumpConfig = async (
    configFileName: string
-): Promise<DumpConfig | void> => {
+): Promise<Nullable<DumpConfig> | void> => {
    const unsanitizedConfig: Partial<DumpConfig> = await loadConfig(
       configFileName
    );
-   const { error, config, warning } = dumpConfigValidations(unsanitizedConfig);
+   const { errors, config, warnings } = dumpConfigValidations(
+      unsanitizedConfig
+   );
 
-   if (!config) {
-      if (error) {
-         console.log(error);
-         return;
-      }
-
-      console.log(`config is invalid`);
-      return;
+   if (warnings.length > 0) {
+      warnings.forEach(console.log);
    }
 
-   if (warning) {
-      console.log(`warning: ${warning}`);
+   if (errors.length > 0) {
+      errors.forEach(console.log);
+      return;
+   }
+   if (!config) {
+      console.log(`config is invalid`);
+      return;
    }
 
    return config;

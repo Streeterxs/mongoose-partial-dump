@@ -5,7 +5,7 @@ import { CliDump } from './cliTypes';
 
 export const getValidatedDumpId = (id: string) => {
    if (!Types.ObjectId.isValid(id)) {
-      return null;
+      return;
    }
 
    return new Types.ObjectId(id);
@@ -13,15 +13,23 @@ export const getValidatedDumpId = (id: string) => {
 
 export const getValidatedDumpLog = (log?: boolean) => {
    if (!(typeof log === 'boolean')) {
-      return null;
+      return;
    }
 
    return log;
 };
 
+export const getValidatedDumpOutputDir = (outputDir?: string) => {
+   if (!(typeof outputDir === 'string')) {
+      return;
+   }
+
+   return outputDir;
+};
+
 export const validateDumpCliConfig = (
    argv: void | CliDump,
-   config: void | DumpConfig | undefined
+   config: void | Nullable<DumpConfig> | undefined
 ) => {
    if (!argv) {
       console.log('Invalid given CLI arguments');
@@ -42,6 +50,17 @@ export const validateDumpCliConfig = (
       }
    }
 
+   if (!argv.outputDir) {
+      if (!config.outputDir) {
+         console.log(
+            'At least a CONFIG <outputDir> or a CLI <outputDir> must me given'
+         );
+         return;
+      }
+   }
+
+   const outputDir = argv.outputDir ?? config.outputDir;
+
    return {
       getPayload: config.getPayload,
       models: config.models,
@@ -49,5 +68,6 @@ export const validateDumpCliConfig = (
       collectionName: argv.collectionName,
       id: argv.id,
       log: argv.log,
+      outputDir,
    };
 };

@@ -6,7 +6,7 @@ import { dumpSanitize } from './dumpSanitize';
 export const getDumpArgv = () => {
    return yargs(hideBin(process.argv))
       .command({
-         command: 'partial-dump <collectionName> [id]',
+         command: 'partial-dump <collectionName> [id] [outputDir]',
          desc: 'Create a partial dump of a MongoDB database using mongoose',
       })
       .help().argv;
