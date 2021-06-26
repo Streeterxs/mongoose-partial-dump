@@ -1,35 +1,26 @@
 import { CliDump } from './cliTypes';
-import { getValidatedDumpId, getValidatedDumpLog } from './dumpValidations';
+import {
+   getValidatedDumpId,
+   getValidatedDumpLog,
+   getValidatedDumpOutputDir,
+} from './dumpValidations';
 
-export const dumpSanitize = (argv): CliDump | void => {
+export const dumpSanitize = (argv: any): CliDump | void => {
    const collectionName = argv.collectionName;
    const id = getValidatedDumpId(argv.id);
    const log = getValidatedDumpLog(argv.log);
+   const outputDir = getValidatedDumpOutputDir(argv.outputDir);
+
+   const dumpSanitizedObj = {
+      collectionName,
+      id,
+      log,
+      outputDir,
+   };
 
    if (!id) {
       console.log('Invalid given <id>. Must be a valid MongoDB ObjectId');
-      if (!log) {
-         return {
-            collectionName,
-         };
-      }
-
-      return {
-         collectionName,
-         log,
-      };
    }
 
-   if (!log) {
-      return {
-         id,
-         collectionName,
-      };
-   }
-
-   return {
-      id,
-      collectionName,
-      log,
-   };
+   return dumpSanitizedObj;
 };
