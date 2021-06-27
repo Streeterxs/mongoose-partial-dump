@@ -51,4 +51,4 @@ This package will aid developers to create partial dumps of a mongoDB database u
 
 ### Examples
 
--  Mongoose partial dumper example - https://github.com/Streeterxs/mongoose-partial-dump (use the scripts in package.json to make your tests easier)
+-  Mongoose partial dumper example - https://github.com/Streeterxs/mongoose-partial-dump-example (use the scripts in package.json to make your tests easier)
