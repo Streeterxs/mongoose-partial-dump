@@ -1,5 +1,5 @@
 import mongoose, { Types } from 'mongoose';
-import { getRefPaths, getSchemaPathsAndKeys } from './mongoUtils';
+import { getRefPaths, getSchemaPathsAndKeys } from '../database/mongoUtils';
 
 export type getPayloadType = (
    collectionName: string
