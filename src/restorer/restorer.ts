@@ -1,13 +1,18 @@
-// eslint-disable-next-line
-import { IMPORT_DUMP_FUNCTIONS } from '../dumper/collectionsToDuplicate';
+import mongoose from 'mongoose';
 
-export const partialDumpPopulate = async (dataString: string) => {
-  const data = JSON.parse(dataString);
+type RestoreData = {
+   [key: string]: any[];
+};
+export const restore = async (dataString: string) => {
+   const data: RestoreData = JSON.parse(dataString);
 
-  const collectionNameArray = Object.keys(data);
+   const collectionNameArray = Object.keys(data);
 
-  for (const collectionName of collectionNameArray) {
-    const collImportFunction = IMPORT_DUMP_FUNCTIONS[collectionName];
-    await collImportFunction(data[collectionName]);
-  }
+   for (const collectionName of collectionNameArray) {
+      const model = mongoose.model(collectionName);
+
+      for (const document of data[collectionName]) {
+         await new model({ ...document }).save();
+      }
+   }
 };

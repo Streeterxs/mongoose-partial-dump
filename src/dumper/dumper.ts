@@ -1,6 +1,10 @@
 import mongoose, { Types } from 'mongoose';
 
-import { collectionsToDuplicate, getAllRefPath, RefPath } from './mongoUtils';
+import {
+   collectionsToDuplicate,
+   getAllRefPath,
+   RefPath,
+} from '../database/mongoUtils';
 import {
    dumperHasDocument,
    getConditions,
