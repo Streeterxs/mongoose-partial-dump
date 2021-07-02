@@ -11,7 +11,7 @@
     "prebuild": "eslint --fix tsconfig.json --fix",
     "babel": "babel-node --extensions \".es6,.js,.es,.jsx,.mjs,.ts,.tsx\"",
     "build": "npm run clear && babel src --extensions \".es6,.js,.es,.jsx,.mjs,.ts\" --ignore *.test.js --out-dir build --copy-files",
-    "build:linux:admin": "yarn build && chmod +x build/cli/dump.js",
+    "build:linux:admin": "yarn build && chmod +x build/cli/cli.js",
     "clear": "rimraf ./build"
   },
   "author": "Afonso Araújo Neto",
@@ -48,7 +48,7 @@
     "typescript": "4.2.3"
   },
   "bin": {
-    "partial": "./build/cli/dump.js"
+    "partial": "./build/cli/cli.js"
   },
   "lint-staged": {
     "*.{js,ts}": "eslint --fix",

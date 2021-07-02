@@ -6,3 +6,7 @@ export type CliDump = {
    outputDir?: string;
    log?: boolean;
 };
+
+export type CliRestore = {
+   inputDir?: string;
+};

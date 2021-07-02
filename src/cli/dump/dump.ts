@@ -1,21 +1,33 @@
-#!/usr/bin/env node
 import fs from 'fs';
 import mongoose, { Types } from 'mongoose';
 
-import { connectToDb } from '../database/database';
-import { dumper } from '../dumper/dumper';
-import { modelToSchema } from '../database/modelToSchema';
+import { connectToDb, DatabaseConfig } from '../../database/database';
+import { dumper } from '../../dumper/dumper';
+import { modelToSchema } from '../../database/modelToSchema';
 
-import { getConfig, Configs } from '../configs/configMapper';
-import { getDumpSanitizedArgv } from './dumpCli';
+import { getConfig, Configs } from '../../configs/configMapper';
 import { validateDumpCliConfig } from './dumpValidations';
-import { getPayloadType } from '../dumper/dumperUtils';
+import { getPayloadType } from '../../dumper/dumperUtils';
+import { dumpSanitize } from './dumpSanitize';
 
 type getDumpInput = {
    collectionName: string;
    collectionObjectId?: Types.ObjectId;
    getPayload?: getPayloadType;
 };
+
+type dumpInput =
+   | {
+        getPayload: getPayloadType | null | undefined;
+        models: mongoose.Model<any, any, any>[] | null;
+        db: DatabaseConfig | null;
+        collectionName: string;
+        id: Types.ObjectId | undefined;
+        log: boolean | undefined;
+        outputDir: string | null | undefined;
+     }
+   | undefined;
+
 const getDump = ({
    collectionName,
    collectionObjectId,
@@ -38,14 +50,17 @@ const getDump = ({
    });
 };
 
-const getDumpObject = async () => {
+export const getDumpSanitizedArgv = (argv: any) => {
+   return dumpSanitize(argv);
+};
+
+export const getDumpObject = async (argv: any) => {
    const unvalidatedConfig = await getConfig(Configs.DUMP);
-   const unvalidatedArgv = getDumpSanitizedArgv();
+   const unvalidatedArgv = getDumpSanitizedArgv(argv);
    return validateDumpCliConfig(unvalidatedArgv, unvalidatedConfig);
 };
 
-const dump = async () => {
-   const validatedDumpObj = await getDumpObject();
+export const dump = async (validatedDumpObj: dumpInput) => {
    if (!validatedDumpObj) {
       return;
    }
@@ -86,12 +101,7 @@ const dump = async () => {
    fs.writeFileSync(outputDir, stringfiedDump);
 };
 
-(async () => {
-   try {
-      await dump();
-   } catch (err) {
-      console.log('err: ', err);
-   }
-
-   process.exit();
-})();
+export const runDump = async (argv: any) => {
+   const dumpObject = await getDumpObject(argv);
+   await dump(dumpObject);
+};

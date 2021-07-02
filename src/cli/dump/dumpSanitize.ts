@@ -1,4 +1,4 @@
-import { CliDump } from './cliTypes';
+import { CliDump } from '../cliTypes';
 import {
    getValidatedDumpId,
    getValidatedDumpLog,
