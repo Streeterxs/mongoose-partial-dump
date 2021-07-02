@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 
-import { DumpConfig } from '../configs/dumpConfig/loadDumpConfig';
-import { CliDump } from './cliTypes';
+import { DumpConfig } from '../../configs/dumpConfig/dumpConfigValidations';
+import { CliDump } from '../cliTypes';
 
 export const getValidatedDumpId = (id: string) => {
    if (!Types.ObjectId.isValid(id)) {
