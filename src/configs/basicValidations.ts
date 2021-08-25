@@ -1,5 +1,6 @@
 import { Model } from 'mongoose';
 import { DatabaseConfig } from '../database/database';
+import * as yup from 'yup';
 
 export type ConfigValidation<T> = {
    errors: (string | null)[];
@@ -53,4 +54,45 @@ export const modelsConfigValidate = (models: Model<any>[] | undefined) => {
       warning: null,
       models,
    };
+};
+
+type AnonymizationField = {
+   field: string;
+   type: string;
+};
+export type AnonymizationConfig = {
+   fields: AnonymizationField[];
+};
+
+export const anonymizationSchema = yup.object().shape({
+   fields: yup
+      .array()
+      .of(
+         yup.object().shape({
+            field: yup.string().required(),
+            type: yup.string().required(),
+         })
+      )
+      .required(),
+});
+
+export const anonymizationConfigValidation = (
+   anonymization: AnonymizationConfig
+) => {
+   try {
+      const anonymizationConfig = anonymizationSchema.validateSync(
+         anonymization
+      );
+      return {
+         errors: [],
+         warning: null,
+         anonymization: anonymizationConfig,
+      };
+   } catch (e) {
+      return {
+         errors: e.errors,
+         warning: null,
+         anonymization: null,
+      };
+   }
 };
