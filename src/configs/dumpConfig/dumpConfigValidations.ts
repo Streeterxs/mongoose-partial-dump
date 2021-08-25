@@ -2,6 +2,8 @@ import { Model } from 'mongoose';
 import { DatabaseConfig } from '../../database/database';
 import { getPayloadType } from '../../dumper/dumperUtils';
 import {
+   AnonymizationConfig,
+   anonymizationConfigValidation,
    ConfigValidation,
    dbConfigValidate,
    modelsConfigValidate,
@@ -12,6 +14,7 @@ export type DumpConfig = {
    models: Model<any>[];
    getPayload?: getPayloadType;
    outputDir?: string;
+   anonymize?: AnonymizationConfig;
 };
 
 export const dumpConfigValidations = (
@@ -31,12 +34,14 @@ export const dumpConfigValidations = (
    const modelsValidatedObj = modelsConfigValidate(config.models);
    const getPayloadValidatedObj = getPayloadConfigValidate(config.getPayload);
    const outputDirValidatedObj = outputDirConfigValidate(config.outputDir);
+   const anonymizeValidatedObj = anonymizeConfigValidate(config.anonymize);
 
    const errors = [
       dbValidatedObj.error,
       modelsValidatedObj.error,
       getPayloadValidatedObj.error,
       outputDirValidatedObj.error,
+      ...anonymizeValidatedObj.errors,
    ];
 
    const warnings = [
@@ -110,4 +115,18 @@ const outputDirConfigValidate = (outputDir: string | undefined) => {
       warning: null,
       outputDir,
    };
+};
+
+const anonymizeConfigValidate = (
+   anonymize: AnonymizationConfig | undefined
+) => {
+   if (!anonymize) {
+      return {
+         errors: [],
+         warning: null,
+         anonymize: null,
+      };
+   }
+
+   return anonymizationConfigValidation(anonymize);
 };
