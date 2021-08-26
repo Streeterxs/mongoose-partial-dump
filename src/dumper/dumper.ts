@@ -6,10 +6,11 @@ import {
    RefPath,
 } from '../database/mongoUtils';
 import {
+   AnonymizationField,
    dumperHasDocument,
    getConditions,
    getPayloadType,
-   removeFields,
+   normalizeFields,
 } from './dumperUtils';
 
 type DumperInput = {
@@ -17,13 +18,15 @@ type DumperInput = {
    collectionObjectId?: Types.ObjectId | string;
    getPayload?: getPayloadType;
    fieldsToRemove?: string[];
+   fieldsToAnonymize?: AnonymizationField[];
    dump?: any;
 };
 export const dumper = async ({
    collectionName,
    collectionObjectId,
    getPayload,
-   fieldsToRemove,
+   fieldsToRemove = [],
+   fieldsToAnonymize = [],
    dump = {},
 }: DumperInput) => {
    console.log('dumper running :)');
@@ -53,8 +56,9 @@ export const dumper = async ({
          continue;
       }
 
-      const docWithoutFields = removeFields({
+      const docWithoutFields = normalizeFields({
          fieldsToRemove,
+         fieldsToAnonymize,
          doc,
       });
       dump[mainCollectionName] = [
@@ -86,6 +90,7 @@ export const dumper = async ({
             dump,
             collectionName,
             fieldsToRemove,
+            fieldsToAnonymize,
             doc,
          });
 
@@ -98,8 +103,9 @@ export const dumper = async ({
             continue;
          }
 
-         const docWithoutFields = removeFields({
+         const docWithoutFields = normalizeFields({
             fieldsToRemove,
+            fieldsToAnonymize,
             doc,
          });
          dump[collectionName] = [...dump[collectionName], docWithoutFields];
@@ -123,13 +129,15 @@ type populateDumpWithRefDocsInput = {
    dump: any;
    doc: any;
    collectionName: string;
-   fieldsToRemove: any;
+   fieldsToRemove: string[];
+   fieldsToAnonymize: AnonymizationField[];
 };
 const populateDumpWithRefDocs = async ({
    dump,
    doc,
    collectionName,
    fieldsToRemove,
+   fieldsToAnonymize,
 }: populateDumpWithRefDocsInput) => {
    const allRefPaths = getAllRefPath(collectionName);
 
@@ -138,9 +146,11 @@ const populateDumpWithRefDocs = async ({
          dump[refPath.collection] = [];
       }
       const refPathModel = mongoose.model(refPath.collection);
-      const docRefPath = await refPathModel.findOne({
-         _id: doc[refPath.pathKey],
-      });
+      const docRefPath = await refPathModel
+         .findOne({
+            _id: doc[refPath.pathKey],
+         })
+         .lean();
 
       if (!(refPath.collection in dump)) {
          dump[refPath.collection] = [];
@@ -154,8 +164,9 @@ const populateDumpWithRefDocs = async ({
       if (docRefPathAlreadyDumped) {
          continue;
       }
-      const docRefPathWithoutFields = removeFields({
+      const docRefPathWithoutFields = normalizeFields({
          fieldsToRemove,
+         fieldsToAnonymize,
          doc: docRefPath,
       });
 

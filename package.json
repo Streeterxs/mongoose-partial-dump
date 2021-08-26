@@ -21,6 +21,7 @@
     "@endemolshinegroup/cosmiconfig-typescript-loader": "^3.0.2",
     "cosmiconfig": "^7.0.0",
     "eslint-plugin-no-only-tests": "^2.4.0",
+    "faker": "^5.5.3",
     "mongoose": "^5.12.0",
     "yargs": "^17.0.0-candidate.13",
     "yup": "^0.32.9"
@@ -32,6 +33,7 @@
     "@babel/plugin-transform-modules-commonjs": "^7.13.8",
     "@babel/plugin-transform-runtime": "^7.13.10",
     "@babel/preset-typescript": "^7.10.4",
+    "@types/faker": "5.5.8",
     "@types/jest": "26.0.20",
     "@types/mongoose": "5.10.3",
     "@types/yargs": "^16.0.1",

@@ -1,6 +1,8 @@
 import { Model } from 'mongoose';
 import { DatabaseConfig } from '../database/database';
 import * as yup from 'yup';
+import { AnonymizationField } from '../dumper/dumperUtils';
+import { AnonymizationType } from '../utils/anonymizer';
 
 export type ConfigValidation<T> = {
    errors: (string | null)[];
@@ -56,10 +58,6 @@ export const modelsConfigValidate = (models: Model<any>[] | undefined) => {
    };
 };
 
-type AnonymizationField = {
-   field: string;
-   type: string;
-};
 export type AnonymizationConfig = {
    fields: AnonymizationField[];
 };
@@ -70,7 +68,9 @@ export const anonymizationSchema = yup.object().shape({
       .of(
          yup.object().shape({
             field: yup.string().required(),
-            type: yup.string().required(),
+            type: yup
+               .mixed<AnonymizationType>()
+               .oneOf(Object.values(AnonymizationType)),
          })
       )
       .required(),
@@ -86,13 +86,13 @@ export const anonymizationConfigValidation = (
       return {
          errors: [],
          warning: null,
-         anonymization: anonymizationConfig,
+         anonymize: anonymizationConfig,
       };
    } catch (e) {
       return {
          errors: e.errors,
          warning: null,
-         anonymization: null,
+         anonymize: null,
       };
    }
 };

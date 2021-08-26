@@ -1,5 +1,6 @@
 import mongoose, { Types } from 'mongoose';
 import { getRefPaths, getSchemaPathsAndKeys } from '../database/mongoUtils';
+import { AnonymizationType, anonymize } from '../utils/anonymizer';
 
 export type getPayloadType = (
    collectionName: string
@@ -84,16 +85,44 @@ export const getIdConditions = ({
 
 type removeFieldsInput = {
    fieldsToRemove: string[];
-   doc: any;
 };
-export const removeFields = ({ fieldsToRemove, doc }: removeFieldsInput) => {
-   if (fieldsToRemove) {
-      for (const field of fieldsToRemove) {
-         doc[field] = null;
-      }
-   }
+export const removeFields = ({ fieldsToRemove = [] }: removeFieldsInput) => {
+   return Object.fromEntries(fieldsToRemove.map((field) => [field, null]));
+};
 
-   return doc;
+export type AnonymizationField = {
+   field: string;
+   type: AnonymizationType;
+};
+
+type anonymizeFieldsInput = {
+   fieldsToAnonymize: AnonymizationField[];
+};
+export const anonymizeFields = ({
+   fieldsToAnonymize = [],
+}: anonymizeFieldsInput) => {
+   return Object.fromEntries(
+      fieldsToAnonymize.map((field) => {
+         return [field.field, anonymize(field.type)];
+      })
+   );
+};
+
+type normalizeFieldsInput = {
+   fieldsToAnonymize: AnonymizationField[];
+   doc: any;
+   fieldsToRemove: string[];
+};
+export const normalizeFields = ({
+   fieldsToAnonymize,
+   fieldsToRemove,
+   doc,
+}: normalizeFieldsInput) => {
+   return {
+      ...doc,
+      ...anonymizeFields({ fieldsToAnonymize }),
+      ...removeFields({ fieldsToRemove }),
+   };
 };
 
 type dumperHasDocumentInput = {

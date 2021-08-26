@@ -60,6 +60,7 @@ export const dumpConfigValidations = (
          db: dbValidatedObj.db,
          models: modelsValidatedObj.models,
          getPayload: getPayloadValidatedObj.getPayload,
+         anonymize: anonymizeValidatedObj.anonymize,
          outputDir: outputDirValidatedObj.outputDir,
       },
    };
