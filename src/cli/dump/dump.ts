@@ -7,13 +7,15 @@ import { modelToSchema } from '../../database/modelToSchema';
 
 import { getConfig, Configs } from '../../configs/configMapper';
 import { validateDumpCliConfig } from './dumpValidations';
-import { getPayloadType } from '../../dumper/dumperUtils';
+import { AnonymizationField, getPayloadType } from '../../dumper/dumperUtils';
 import { dumpSanitize } from './dumpSanitize';
 
 type getDumpInput = {
    collectionName: string;
    collectionObjectId?: Types.ObjectId;
    getPayload?: getPayloadType;
+   fieldsToAnonymize?: AnonymizationField[];
+   fieldsToRemove?: string[];
 };
 
 type dumpInput =
@@ -25,6 +27,8 @@ type dumpInput =
         id: Types.ObjectId | undefined;
         log: boolean | undefined;
         outputDir: string | null | undefined;
+        fieldsToRemove?: string[];
+        fieldsToAnonymize?: AnonymizationField[];
      }
    | undefined;
 
@@ -32,6 +36,8 @@ const getDump = ({
    collectionName,
    collectionObjectId,
    getPayload,
+   fieldsToAnonymize,
+   fieldsToRemove,
 }: getDumpInput) => {
    if (!getPayload) {
       if (!collectionObjectId) {
@@ -41,12 +47,16 @@ const getDump = ({
       return dumper({
          collectionName,
          collectionObjectId,
+         fieldsToAnonymize,
+         fieldsToRemove,
       });
    }
 
    return dumper({
       collectionName,
       getPayload,
+      fieldsToAnonymize,
+      fieldsToRemove,
    });
 };
 
@@ -73,7 +83,11 @@ export const dump = async (validatedDumpObj: dumpInput) => {
       log,
       db,
       outputDir,
+      fieldsToAnonymize,
+      fieldsToRemove,
    } = validatedDumpObj;
+
+   console.log({ fieldsToAnonymize });
 
    for (const model of models) {
       const modelName = model.collection.name;
@@ -89,6 +103,8 @@ export const dump = async (validatedDumpObj: dumpInput) => {
       collectionName,
       collectionObjectId: id,
       getPayload,
+      fieldsToAnonymize,
+      fieldsToRemove,
    });
 
    if (log) {
@@ -103,5 +119,6 @@ export const dump = async (validatedDumpObj: dumpInput) => {
 
 export const runDump = async (argv: any) => {
    const dumpObject = await getDumpObject(argv);
+   console.log({ dumpObject });
    await dump(dumpObject);
 };

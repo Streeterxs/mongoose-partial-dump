@@ -61,10 +61,12 @@ export const validateDumpCliConfig = (
 
    const outputDir = argv.outputDir ?? config.outputDir;
 
+   console.log({ config });
    return {
       getPayload: config.getPayload,
       models: config.models,
       db: config.db,
+      fieldsToAnonymize: config.anonymize?.fields,
       collectionName: argv.collectionName,
       id: argv.id,
       log: argv.log,

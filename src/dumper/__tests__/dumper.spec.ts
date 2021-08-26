@@ -12,6 +12,7 @@ import { createPerson } from '../../../test/fixtures/createPerson';
 import { createDogOwner } from '../../../test/fixtures/createDogOwner';
 import { createPetShop } from '../../../test/fixtures/createPetShop';
 import { createPetShopClient } from '../../../test/fixtures/createPetShopClient';
+import { AnonymizationType } from '../../utils/anonymizer';
 
 const { connect, clearDatabase, closeDatabase } = databaseTestModule();
 
@@ -310,4 +311,30 @@ it('should dump ref paths before hasDoc check of collections', async () => {
    expect(dupGenerated['Person']).toHaveLength(1);
    expect(dupGenerated['Person'][0]._id).toEqual(person._id);
    expect(dupGenerated['Person'][0].name).toEqual('Charlinhos');
+});
+
+it('should dump with anonymizing name fields', async () => {
+   const dog = await createDog({ name: 'Blackie' });
+   const person = await createPerson({ name: 'Charlinhos' });
+   const dogOwner = await createDogOwner({ dog: dog._id, person: person._id });
+   const petShop = await createPetShop({ dogs: [dog._id] });
+   await createPetShopClient({
+      petShop: petShop._id,
+      dogOwner: dogOwner._id,
+   });
+
+   const dupGenerated = await dumper({
+      collectionName: 'Dog',
+      collectionObjectId: dog._id,
+      fieldsToAnonymize: [
+         {
+            field: 'name',
+            type: AnonymizationType.name,
+         },
+      ],
+   });
+
+   expect(dupGenerated['Person']).toHaveLength(1);
+   expect(dupGenerated['Person'][0]._id).toEqual(person._id);
+   expect(dupGenerated['Person'][0].name).not.toEqual('Charlinhos');
 });
