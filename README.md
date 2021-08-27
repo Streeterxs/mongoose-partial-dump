@@ -4,7 +4,11 @@ A partial dumper helper for a mongoose environment.
 
 This package will aid developers to create partial dumps of a mongoDB database using mongoose. Making possible to easily dump only documents related to specifics functionalities of a bigger project.
 
-### Inputs
+## Table of Contents
+
+-  [Dumper](#dumper)
+-  [Restore](#restorer)
+-  [Installation](#installation)
 
 ### Installation
 
@@ -12,10 +16,14 @@ This package will aid developers to create partial dumps of a mongoDB database u
 -  `npm install mongoose-partial-dumper`
 -  `yarn add mongoose-partial-dump`
 
+## DUMPER
+
+Responsible for write dump files or log dump json
+
 ### Usage
 
 -  Create a partial-dump.config.{ts, js} file
--  `yarn partial dump <collectionName> [id]`
+-  `yarn partial dump <collectionName> [id] [outputDir]`
 
 ### Strategies
 
@@ -48,6 +56,32 @@ This package will aid developers to create partial dumps of a mongoDB database u
 | Input: | type:  | Description:                                                                           | Required: | example: |
 | ------ | ------ | -------------------------------------------------------------------------------------- | --------- | -------- |
 | --log  | string | If this option is given, no file will be generated, instead a log will show on console | **false** | 'User'   |
+
+## RESTORE
+
+Responsible for read dump files and import to your database
+
+### Usage
+
+-  Create a partial-dump.config.{ts, js} file
+-  `yarn partial restore [inputDir]`
+
+#### Config
+
+| Install: | type:        | Description:                                            | Required: | example:                                   |
+| -------- | ------------ | ------------------------------------------------------- | --------- | ------------------------------------------ |
+| db       | object       | database input configurations                           | **true**  | {url: ''}                                  |
+| db.url   | string       | database url configurations                             | **true**  | <mongodb://localhost:27017/dumper-example> |
+| models   | Model<any>[] | Mongoose Model list                                     | **true**  | {models: [User]}                           |
+| inputDir | string       | Path to file to be restored (imported to your database) | **false** | 'dump.json'                                |
+
+#### CLI
+
+##### Arguments
+
+| Input:   | type:  | Description:                                            | Required: | example:    |
+| -------- | ------ | ------------------------------------------------------- | --------- | ----------- |
+| inputDir | string | Path to file to be restored (imported to your database) | **false** | 'dump.json' |
 
 ### Examples
 
