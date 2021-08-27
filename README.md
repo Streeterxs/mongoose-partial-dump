@@ -7,6 +7,7 @@ This package will aid developers to create partial dumps of a mongoDB database u
 ## Table of Contents
 
 -  [Dumper](#dumper)
+   -  [Anonymization](#anonymize-type-enum)
 -  [Restore](#restorer)
 -  [Installation](#installation)
 
@@ -33,13 +34,26 @@ Responsible for write dump files or log dump json
 
 #### Config
 
-| Install:   | type:        | Description:                                | Required: | example:                                   |
-| ---------- | ------------ | ------------------------------------------- | --------- | ------------------------------------------ |
-| db         | object       | database input configurations               | **true**  | {url: ''}                                  |
-| db.url     | string       | database url configurations                 | **true**  | <mongodb://localhost:27017/dumper-example> |
-| models     | Model<any>[] | Mongoose Model list                         | **true**  | {models: [User]}                           |
-| getPayload | function     | Function that returns a Model.find() Object | **false** | {\_id: <ObjectId>, company: <ObjectId>}    |
-| outputDir  | string       | database input configurations               | **false** | 'dump.json'                                |
+| Install:        | type:        | Description:                                   | Required: | example:                                   |
+| --------------- | ------------ | ---------------------------------------------- | --------- | ------------------------------------------ |
+| db              | object       | database input configurations                  | **true**  | {url: ''}                                  |
+| db.url          | string       | database url configurations                    | **true**  | <mongodb://localhost:27017/dumper-example> |
+| models          | Model<any>[] | Mongoose Model list                            | **true**  | {models: [User]}                           |
+| getPayload      | function     | Function that returns a Model.find() Object    | **false** | {\_id: <ObjectId>, company: <ObjectId>}    |
+| outputDir       | string       | database input configurations                  | **false** | 'dump.json'                                |
+| anonymize       | object       | anonymize info object, data anonymization      | **false** | {field: 'name', type: 'name'}              |
+| anonymize.field | string       | input to dumper know which fields to anonymize | **false** | 'name', 'phone', 'address', etc...         |
+| anonymize.type  | enum         | input to dumper know which type the field is   | **false** | 'name', 'phone', 'address', etc...         |
+
+### Anonymize Type Enum
+
+-  name
+-  phone
+-  address
+-  avatar
+-  birthdate
+-  creationDate
+-  companyName
 
 #### CLI
 
