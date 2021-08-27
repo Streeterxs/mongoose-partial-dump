@@ -59,7 +59,7 @@ const inputDirConfigValidate = (inputDir: string | undefined) => {
       return {
          error: null,
          warning:
-            'warning: <inputDir> config was not defined. You must input a <inputDir> on CLI for the dump work.',
+            'warning: <inputDir> was not defined on [CONFIG]. You must input a <inputDir> on CLI for the dump work.',
          db: null,
       };
    }
@@ -68,7 +68,7 @@ const inputDirConfigValidate = (inputDir: string | undefined) => {
       return {
          error: null,
          warning:
-            'warning: <inputDir> config if defined, but not a function. This will cause a error if no <inputDir> input was given on CLI.',
+            'warning: <inputDir> config is defined, but not a function on [CONFIG]. This will cause a error if no <inputDir> input was given on CLI.',
          inputDir: null,
       };
    }
