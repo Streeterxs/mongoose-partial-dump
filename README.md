@@ -8,7 +8,7 @@ This package will aid developers to create partial dumps of a mongoDB database u
 
 -  [Dumper](#dumper)
    -  [Anonymization](#anonymize-type-enum)
--  [Restore](#restorer)
+-  [Restore](#restore)
 -  [Installation](#installation)
 
 ### Installation
