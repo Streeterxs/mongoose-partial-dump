@@ -1,7 +1,6 @@
 .circleci
 .husky
 images
-node_modules
 src
 test
 .eslintrc.js
