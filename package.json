@@ -53,6 +53,7 @@
   "bin": {
     "partial": "./build/cli/cli.js"
   },
+  "repository": "https://github.com/Streeterxs/mongoose-partial-dump",
   "lint-staged": {
     "*.{js,ts}": "eslint --fix",
     "*.spec.{js,ts}": "eslint --fix",
