@@ -3,6 +3,7 @@
   "version": "0.4.0",
   "description": "A package to help mongoose users to partially dump models of your db",
   "main": "build/index.cjs.js",
+  "types": "build/index.d.ts",
   "module": "src/index.ts",
   "unpkg": "build/index.umd.js",
   "scripts": {
