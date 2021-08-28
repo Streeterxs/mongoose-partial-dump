@@ -6,12 +6,13 @@
         "preserveConstEnums": true,
         "sourceMap": true,
         "strict": true,
-        "outDir": "./build",
+        "outDir": "build",
         "declaration": true,
+        "declarationDir": "build",
         "esModuleInterop": true,
     },
     "include": [
-        "src/**/*"
+        "src/index.ts"
     ],
     "exclude": [
         "node_modules", "babel.config.js"

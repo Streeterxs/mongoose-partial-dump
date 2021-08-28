@@ -2,7 +2,9 @@
   "name": "mongoose-partial-dumper",
   "version": "0.3.2",
   "description": "A package to help mongoose users to partially dump models of your db",
-  "main": "index.js",
+  "main": "build/index.cjs.js",
+  "module": "src/index.ts",
+  "unpkg": "build/index.umd.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "delete:node_modules": "find . -name \"node_modules\" -exec rm -rf '{}' +",
@@ -10,8 +12,8 @@
     "prepare": "husky install",
     "prebuild": "eslint --fix tsconfig.json --fix",
     "babel": "babel-node --extensions \".es6,.js,.es,.jsx,.mjs,.ts,.tsx\"",
-    "build": "npm run clear && babel src --extensions \".es6,.js,.es,.jsx,.mjs,.ts\" --ignore *.test.js --out-dir build --copy-files",
-    "build:linux:admin": "yarn build && chmod +x build/cli/cli.js",
+    "build": "npm run clear && yarn rollup --config && tsc --emitDeclarationOnly",
+    "build:linux:admin": "yarn build && chmod +x build/cli.cjs.js && chmod +x build/index.cjs.js",
     "clear": "rimraf ./build"
   },
   "author": "Afonso Araújo Neto",
@@ -32,7 +34,14 @@
     "@babel/node": "^7.13.10",
     "@babel/plugin-transform-modules-commonjs": "^7.13.8",
     "@babel/plugin-transform-runtime": "^7.13.10",
+    "@babel/preset-env": "^7.15.0",
     "@babel/preset-typescript": "^7.10.4",
+    "@rollup/plugin-babel": "^5.3.0",
+    "@rollup/plugin-commonjs": "^20.0.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.0.4",
+    "@rollup/plugin-replace": "^3.0.0",
+    "@rollup/plugin-typescript": "^8.2.5",
     "@types/faker": "5.5.8",
     "@types/jest": "26.0.20",
     "@types/mongoose": "5.10.3",
@@ -48,10 +57,13 @@
     "lint-staged": ">=10",
     "mongodb-memory-server": "^6.9.6",
     "prettier": "~2.2.1",
+    "rollup": "^2.56.3",
+    "rollup-plugin-preserve-shebangs": "^0.2.0",
+    "rollup-plugin-terser": "^7.0.2",
     "typescript": "4.2.3"
   },
   "bin": {
-    "partial": "./build/cli/cli.js"
+    "partial": "./build/cli.cjs.js"
   },
   "repository": "https://github.com/Streeterxs/mongoose-partial-dump",
   "lint-staged": {
