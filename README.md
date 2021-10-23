@@ -100,3 +100,4 @@ Responsible for read dump files and import to your database
 ### Examples
 
 -  Mongoose partial dumper example - https://github.com/Streeterxs/mongoose-partial-dump-example (use the scripts in package.json to make your tests easier)
+-  Mongoose partial monorepo example https://github.com/Streeterxs/mongoose-partial-monorepo-example (example usage in a monorepo environment)
