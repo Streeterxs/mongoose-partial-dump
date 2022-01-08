@@ -1,33 +1,33 @@
 import {
-   DumpConfig,
-   dumpConfigValidations,
+  DumpConfig,
+  dumpConfigValidations,
 } from './dumpConfig/dumpConfigValidations';
 import { loadConfig } from './loadConfig';
 import { getLoadValidatedConfig } from './loadValidatedConfig';
 import {
-   RestoreConfig,
-   restoreConfigValidations,
+  RestoreConfig,
+  restoreConfigValidations,
 } from './restoreConfig/restoreConfigValidations';
 
 export enum Configs {
-   DUMP = 'DUMP',
-   RESTORE = 'RESTORE',
+  DUMP = 'DUMP',
+  RESTORE = 'RESTORE',
 }
 
 export const configFileName = 'partial-dumper';
 
 export const getConfig = async (config: Configs) => {
-   const unsanitizedConfig = await loadConfig(configFileName);
-   const getConfigValidation = getLoadValidatedConfig(unsanitizedConfig);
+  const unsanitizedConfig = await loadConfig(configFileName);
+  const getConfigValidation = getLoadValidatedConfig(unsanitizedConfig);
 
-   if (config === Configs.DUMP) {
-      return getConfigValidation<DumpConfig>(dumpConfigValidations);
-   }
+  if (config === Configs.DUMP) {
+    return getConfigValidation<DumpConfig>(dumpConfigValidations);
+  }
 
-   if (config === Configs.RESTORE) {
-      return getConfigValidation<DumpConfig>(restoreConfigValidations);
-   }
+  if (config === Configs.RESTORE) {
+    return getConfigValidation<RestoreConfig>(restoreConfigValidations);
+  }
 
-   console.log('Invalid given config');
-   return;
+  console.log('Invalid given config');
+  return;
 };
