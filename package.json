@@ -6,26 +6,30 @@
   "types": "build/index.d.ts",
   "module": "src/index.ts",
   "unpkg": "build/index.umd.js",
+  "author": "Afonso Araújo Neto",
+  "license": "ISC",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "delete:node_modules": "find . -name \"node_modules\" -exec rm -rf '{}' +",
     "jest": "jest --no-cache --detectOpenHandles",
     "prepare": "husky install",
     "prebuild": "eslint --fix tsconfig.json --fix",
-    "babel": "babel-node --extensions \".es6,.js,.es,.jsx,.mjs,.ts,.tsx\"",
+    "babel": "babel-node --extensions \".es6,.js,.es,.mjs,.ts\"",
     "build": "npm run clear && yarn rollup --config && tsc --emitDeclarationOnly",
     "build:linux:admin": "yarn build && chmod +x build/cli.cjs.js && chmod +x build/index.cjs.js",
-    "clear": "rimraf ./build"
+    "clear": "rimraf ./build",
+    "release:patch": "yarn babel ./scripts/release/release-patch"
   },
-  "author": "Afonso Araújo Neto",
-  "license": "ISC",
   "dependencies": {
     "@babel/runtime": "^7.13.10",
     "@endemolshinegroup/cosmiconfig-typescript-loader": "^3.0.2",
     "cosmiconfig": "^7.0.0",
     "eslint-plugin-no-only-tests": "^2.4.0",
     "faker": "^5.5.3",
+    "generate-changelog": "^1.8.0",
     "mongoose": "^5.12.0",
+    "semver": "^7.3.5",
+    "simple-git": "^2.48.0",
     "yargs": "^17.0.0-candidate.13",
     "yup": "^0.32.9"
   },
@@ -68,7 +72,7 @@
   },
   "repository": "https://github.com/Streeterxs/mongoose-partial-dump",
   "lint-staged": {
-    "*.{js,ts}": "eslint --fix",
+    "*.{ts}": "eslint --fix",
     "*.spec.{js,ts}": "eslint --fix",
     "*.{js,ts,css,md}": "prettier --write"
   }
