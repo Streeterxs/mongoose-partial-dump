@@ -6,7 +6,6 @@ const util = require('util');
 const fs = require('fs');
 
 const execPromisified = util.promisify(childProcess.exec);
-const spawnPromisified = util.promisify(childProcess.spawn);
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 
@@ -40,7 +39,7 @@ const writeFile = util.promisify(fs.writeFile);
     await git.add(['package.json', 'CHANGELOG.md']);
     await git.commit(`release(version): ${newVersion}`);
     await git.addAnnotatedTag(newVersion, `release(version): ${newVersion}`);
-    await git.push('origin', branchName);
+    await git().push(['--follow-tags', '-u', 'origin', branchName]);
 
     const { spawn } = childProcess;
     const gh = spawn('gh', [
