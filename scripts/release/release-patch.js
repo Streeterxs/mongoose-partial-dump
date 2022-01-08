@@ -39,7 +39,7 @@ const writeFile = util.promisify(fs.writeFile);
     await git.add(['package.json', 'CHANGELOG.md']);
     await git.commit(`release(version): ${newVersion}`);
     await git.addAnnotatedTag(newVersion, `release(version): ${newVersion}`);
-    await git().push(['--follow-tags', '-u', 'origin', branchName]);
+    await git.push(['--follow-tags', '-u', 'origin', branchName]);
 
     const { spawn } = childProcess;
     const gh = spawn('gh', [
