@@ -19,14 +19,6 @@ jobs:
           command: yarn install
       - run:
           command: yarn jest
-      - persist_to_workspace:
-          root: ~/mongoose-partial-dumper
-          paths: .
-  build:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: ~/mongoose-partial-dumper
       - run:
           command: yarn build
       - persist_to_workspace:
@@ -47,15 +39,6 @@ workflows:
     build-and-test:
       jobs:
         - install-and-test
-        - build:
-            requires:
-              - install-and-test
-            filters:
-              tags:
-                # semver regex https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39#gistcomment-2877509
-                only: /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
-              branches:
-                only: /^fix/.*/
         - hold-deploy:
             type: approval
             requires:
@@ -65,7 +48,7 @@ workflows:
                 # semver regex https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39#gistcomment-2877509
                 only: /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
               branches:
-                only: /^fix/.*/
+                only: /^release/.*/
         - deploy:
             requires:
               - hold-deploy
@@ -74,5 +57,5 @@ workflows:
                 # semver regex https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39#gistcomment-2877509
                 only: /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
               branches:
-                only: /^fix/.*/
+                only: /^release/.*/
             

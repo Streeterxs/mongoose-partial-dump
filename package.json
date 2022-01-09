@@ -15,7 +15,7 @@
     "prepare": "husky install",
     "prebuild": "eslint --fix tsconfig.json --fix",
     "babel": "babel-node --extensions \".es6,.js,.es,.mjs,.ts\"",
-    "build": "npm run clear && yarn rollup --config && tsc --emitDeclarationOnly",
+    "build": "npm run clear && yarn rollup --config",
     "build:linux:admin": "yarn build && chmod +x build/cli.cjs.js && chmod +x build/index.cjs.js",
     "clear": "rimraf ./build",
     "release:patch": "yarn babel ./scripts/release/release-patch"
