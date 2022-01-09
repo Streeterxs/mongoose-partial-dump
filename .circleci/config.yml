@@ -22,7 +22,6 @@ jobs:
   build:
     <<: *defaults
     steps:
-      - checkout
       - run:
           command: yarn build
   deploy:
@@ -46,7 +45,7 @@ workflows:
                 # semver regex https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39#gistcomment-2877509
                 only: /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
               branches:
-                only: /^release/.*/
+                only: /^fix/.*/
         - hold-deploy:
             type: approval
             requires:
@@ -56,7 +55,7 @@ workflows:
                 # semver regex https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39#gistcomment-2877509
                 only: /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
               branches:
-                only: /^release/.*/
+                only: /^fix/.*/
         - deploy:
             requires:
               - hold-deploy
@@ -65,5 +64,5 @@ workflows:
                 # semver regex https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39#gistcomment-2877509
                 only: /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
               branches:
-                only: /^release/.*/
+                only: /^fix/.*/
             
