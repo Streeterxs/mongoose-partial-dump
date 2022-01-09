@@ -41,10 +41,13 @@ workflows:
         - build:
             requires:
               - install-and-test
-        - deploy:
+        - hold-deploy:
             type: approval
             requires:
               - install-and-test
+        - deploy:
+            requires:
+              - hold-deploy
             filters:
               tags:
                 # semver regex https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39#gistcomment-2877509
