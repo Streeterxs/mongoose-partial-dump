@@ -1,3 +1,19 @@
+#### 0.4.2 (2022-01-09)
+
+##### New Features
+
+- **automatize-deploy:** job to automatize package deploy to npm (#91) (15fee50a)
+- **create-release:** script to create release after new tag creation (#90) (37ec76e9)
+- **create-pull-request:** function to create a new pull request (#89) (d60e2d1f)
+
+##### Bug Fixes
+
+- **circleci-filter-typo:** fixed typo branchs (#93) (76e0492f)
+
+##### Other Changes
+
+- **version:** 0.4.2 (#86) (b029528d)
+
 #### 0.4.2 (2022-01-08)
 
 ##### New Features
