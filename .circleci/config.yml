@@ -1,7 +1,7 @@
 version: 2.1
 
 defaults: &defaults
-  working_directory: ~/mongoose-partial-dump
+  working_directory: ~/mongoose-partial-dumper
   executor:
     name: node/default
     tag: 'lts'
@@ -19,18 +19,27 @@ jobs:
           command: yarn install
       - run:
           command: yarn jest
+      - persist_to_workspace:
+          root: ~/mongoose-partial-dumper
+          paths: .
   build:
     <<: *defaults
     steps:
-      - checkout
+      - attach_workspace:
+          at: ~/mongoose-partial-dumper
       - run:
           command: yarn build
+      - persist_to_workspace:
+          root: ~/mongoose-partial-dumper
+          paths: .
   deploy:
     <<: *defaults
     steps:
+      - attach_workspace:
+          at: ~/mongoose-partial-dumper
       - run:
           name: Authenticate npm registry
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/mongoose-partial-dump/.npmrc
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
       - run:
           name: Publish package
           command: npm publish
@@ -46,7 +55,7 @@ workflows:
                 # semver regex https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39#gistcomment-2877509
                 only: /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
               branches:
-                only: /^release/.*/
+                only: /^fix/.*/
         - hold-deploy:
             type: approval
             requires:
@@ -56,7 +65,7 @@ workflows:
                 # semver regex https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39#gistcomment-2877509
                 only: /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
               branches:
-                only: /^release/.*/
+                only: /^fix/.*/
         - deploy:
             requires:
               - hold-deploy
@@ -65,5 +74,5 @@ workflows:
                 # semver regex https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39#gistcomment-2877509
                 only: /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
               branches:
-                only: /^release/.*/
+                only: /^fix/.*/
             
