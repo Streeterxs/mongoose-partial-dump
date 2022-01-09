@@ -1,3 +1,9 @@
+#### 0.4.2 (2022-01-09)
+
+##### New Features
+
+- **circleci-hold-deploy:** holding deploy workflow (#101) (59399af7)
+
 #### 0.4.2 (2022-01-08)
 
 ##### New Features
