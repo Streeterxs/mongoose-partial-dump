@@ -1,5 +1,7 @@
 const getVersions = require('./getNewVersion');
 const createPullRequest = require('./createPullRequest');
+const createRelease = require('./createRelease');
+
 const childProcess = require('child_process');
 const changelog = require('generate-changelog');
 const simpleGit = require('simple-git/promise');
@@ -54,6 +56,12 @@ const writeFile = util.promisify(fs.writeFile);
         name: newVersion,
         message: `release(version): ${newVersion}`,
       },
+    });
+
+    await createRelease({
+      title: newVersion,
+      notes: generatedChangelog,
+      tag: newVersion,
     });
   } catch (err) {
     console.log({ err });
