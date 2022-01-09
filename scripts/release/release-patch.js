@@ -1,4 +1,5 @@
 const getVersions = require('./getNewVersion');
+const createPullRequest = require('./createPullRequest');
 const childProcess = require('child_process');
 const changelog = require('generate-changelog');
 const simpleGit = require('simple-git/promise');
@@ -25,8 +26,6 @@ const writeFile = util.promisify(fs.writeFile);
     });
 
     const branchName = `release/version-${newVersion}`;
-    await git.pull('origin', 'main');
-    await git.checkoutBranch(branchName, 'main');
 
     const actualChangelog = await readFile('./CHANGELOG.md', 'utf8');
     const newChangelog = generatedChangelog + actualChangelog;
@@ -36,21 +35,26 @@ const writeFile = util.promisify(fs.writeFile);
       `yarn version --new-version ${newVersion} --no-git-tag-version`
     );
 
-    await git.add(['package.json', 'CHANGELOG.md']);
-    await git.commit(`release(version): ${newVersion}`);
-    await git.addAnnotatedTag(newVersion, `release(version): ${newVersion}`);
-    await git.push(['--follow-tags', '-u', 'origin', branchName]);
+    const changeFiles = async () => {
+      await writeFile('./CHANGELOG.md', newChangelog);
+      await execPromisified(
+        `yarn version --new-version ${newVersion} --no-git-tag-version`
+      );
 
-    const { spawn } = childProcess;
-    const gh = spawn('gh', [
-      'pr',
-      'create',
-      '--title',
-      `"release(version): ${newVersion}"`,
-      '--body',
-      generatedChangelog,
-    ]);
-    gh.stdout.on('data', () => gh.stdin.write('\n'));
+      return ['CHANGELOG.md', 'package.json'];
+    };
+
+    await createPullRequest({
+      changeFiles,
+      body: generatedChangelog,
+      branchName,
+      commitMessage: `release(version): ${newVersion}`,
+      title: `release(version): ${newVersion}`,
+      tag: {
+        name: newVersion,
+        message: `release(version): ${newVersion}`,
+      },
+    });
   } catch (err) {
     console.log({ err });
   }
