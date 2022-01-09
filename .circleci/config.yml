@@ -42,7 +42,6 @@ workflows:
             requires:
               - install-and-test
             filters:
-              tags:
               branches:
                 only: /^release\/\.*/
         - hold-deploy:
