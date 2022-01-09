@@ -1,11 +1,16 @@
 version: 2.1
+
+defaults: &defaults
+  working_directory: ~/mongoose-partial-dump
+  executor:
+    name: node/default
+    tag: 'lts'
+    
 orbs:
   node: circleci/node@4.5.1
 jobs:
   build-and-test:
-    executor:
-      name: node/default
-      tag: 'lts'
+    <<: *defaults
     steps:
       - checkout
       - node/install-packages:
@@ -17,10 +22,11 @@ jobs:
       - run:
           command: yarn build
   deploy:
+    <<: *defaults
     steps:
       - run:
           name: Authenticate npm registry
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/mongoose-partial-dump/.npmrc
       - run:
           name: Publish package
           command: npm publish
