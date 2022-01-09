@@ -43,8 +43,6 @@ workflows:
               - install-and-test
             filters:
               tags:
-                # semver regex https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39#gistcomment-2877509
-                only: /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
               branches:
                 only: /^release\/\.*/
         - hold-deploy:
@@ -52,18 +50,12 @@ workflows:
             requires:
               - install-and-test
             filters:
-              tags:
-                # semver regex https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39#gistcomment-2877509
-                only: /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
               branches:
                 only: /^release\/\.*/
         - deploy:
             requires:
               - hold-deploy
             filters:
-              tags:
-                # semver regex https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39#gistcomment-2877509
-                only: /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
               branches:
                 only: /^release\/\.*/
             
