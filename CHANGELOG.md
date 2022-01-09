@@ -1,3 +1,25 @@
+#### 0.4.2 (2022-01-09)
+
+##### New Features
+
+- **filter-deploy-workflows:** filtering by semver regex tag version and branch initial release naming (#103) (21fb8f9f)
+- **circleci-hold-deploy:** holding deploy workflow (#101) (59399af7)
+- **circleci-continue-on-build-error:** build workflow should give us a typescript error and continue to deploy (#97) (b369e3a2)
+- **circleci-defaults:** added default options for jobs like working_directory and executor (#95) (1b9dc3e8)
+- **automatize-deploy:** job to automatize package deploy to npm (#91) (15fee50a)
+- **create-release:** script to create release after new tag creation (#90) (37ec76e9)
+- **create-pull-request:** function to create a new pull request (#89) (d60e2d1f)
+
+##### Bug Fixes
+
+- **removing-tag-validation:** removed tag validation not permitting release (#105) (398b3558)
+- **circleci-deploy-workflow:** fixed branch regex (#99) (cf392e7a)
+- **circleci-filter-typo:** fixed typo branchs (#93) (76e0492f)
+
+##### Other Changes
+
+- **version:** 0.4.2 (#86) (b029528d)
+
 #### 0.4.2 (2022-01-08)
 
 ##### New Features
