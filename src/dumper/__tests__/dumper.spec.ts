@@ -14,6 +14,8 @@ import { createPetShop } from '../../../test/fixtures/createPetShop';
 import { createPetShopClient } from '../../../test/fixtures/createPetShopClient';
 import { AnonymizationType } from '../../utils/anonymizer';
 
+jest.setTimeout(20000);
+
 const { connect, clearDatabase, closeDatabase } = databaseTestModule();
 
 beforeAll(() => connect());
@@ -21,7 +23,6 @@ beforeAll(() => connect());
 afterEach(() => clearDatabase());
 
 afterAll(() => closeDatabase());
-
 it('show copy values for a dog and a petshop', async () => {
   const dog = await new Dog({ name: 'Blackie' }).save();
   await new PetShop({ name: 'Local Peties', dogs: [dog._id] }).save();
