@@ -14,12 +14,9 @@ import { createPetShop } from '../../../test/fixtures/createPetShop';
 import { createPetShopClient } from '../../../test/fixtures/createPetShopClient';
 import { AnonymizationType } from '../../utils/anonymizer';
 
-const { connect, clearDatabase, closeDatabase, mongod } = databaseTestModule();
+const { connect, clearDatabase, closeDatabase } = databaseTestModule();
 
-beforeAll(async () => {
-  console.log('to run connect');
-  await connect();
-});
+beforeAll(() => connect());
 
 afterEach(() => clearDatabase());
 
