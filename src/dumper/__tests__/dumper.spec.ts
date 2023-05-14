@@ -14,13 +14,16 @@ import { createPetShop } from '../../../test/fixtures/createPetShop';
 import { createPetShopClient } from '../../../test/fixtures/createPetShopClient';
 import { AnonymizationType } from '../../utils/anonymizer';
 
-const { connect, clearDatabase, closeDatabase } = databaseTestModule();
+const { connect, clearDatabase, closeDatabase, mongod } = databaseTestModule();
 
-beforeAll(async () => await connect());
+beforeAll(async () => {
+  console.log('to run connect');
+  await connect();
+});
 
-afterEach(async () => await clearDatabase());
+afterEach(() => clearDatabase());
 
-afterAll(async () => await closeDatabase());
+afterAll(() => closeDatabase());
 
 it('show copy values for a dog and a petshop', async () => {
   const dog = await new Dog({ name: 'Blackie' }).save();
