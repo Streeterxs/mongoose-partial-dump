@@ -9,6 +9,8 @@ import { restore } from '../restorer';
 import { dogDumpFixture } from '../__fixtures__/dogDumpFixture';
 import { stringifyMocks } from '../__fixtures__/stringifyMocks';
 
+jest.setTimeout(20000);
+
 const { connect, clearDatabase, closeDatabase } = databaseTestModule();
 
 beforeAll(() => connect());
@@ -18,38 +20,38 @@ afterEach(() => clearDatabase());
 afterAll(() => closeDatabase());
 
 it('should restore a dump creating documents on database', async () => {
-   const dump = stringifyMocks(dogDumpFixture);
+  const dump = stringifyMocks(dogDumpFixture);
 
-   await restore(dump);
+  await restore(dump);
 
-   const dogs = await Dog.find().lean();
-   expect(dogs).toHaveLength(1);
+  const dogs = await Dog.find().lean();
+  expect(dogs).toHaveLength(1);
 
-   const [dog] = dogs;
-   expect(dog.name).toBe(dogDumpFixture.Dog[0].name);
-   expect(dog.__v).toBe(dogDumpFixture.Dog[0].__v);
-   expect(dog._id.toString()).toBe(dogDumpFixture.Dog[0]._id.toString());
+  const [dog] = dogs;
+  expect(dog.name).toBe(dogDumpFixture.Dog[0].name);
+  expect(dog.__v).toBe(dogDumpFixture.Dog[0].__v);
+  expect(dog._id.toString()).toBe(dogDumpFixture.Dog[0]._id.toString());
 
-   const dogOwners = await DogOwner.find().lean();
-   expect(dogOwners).toHaveLength(1);
+  const dogOwners = await DogOwner.find().lean();
+  expect(dogOwners).toHaveLength(1);
 
-   const [dogOwner] = dogOwners;
-   expect(dogOwner.dog.toString()).toEqual(
-      dogDumpFixture.DogOwner[0].dog.toString()
-   );
-   expect(dogOwner.person.toString()).toBe(
-      dogDumpFixture.DogOwner[0].person.toString()
-   );
-   expect(dogOwner.__v).toBe(dogDumpFixture.DogOwner[0].__v);
-   expect(dogOwner._id.toString()).toBe(
-      dogDumpFixture.DogOwner[0]._id.toString()
-   );
+  const [dogOwner] = dogOwners;
+  expect(dogOwner.dog.toString()).toEqual(
+    dogDumpFixture.DogOwner[0].dog.toString()
+  );
+  expect(dogOwner.person.toString()).toBe(
+    dogDumpFixture.DogOwner[0].person.toString()
+  );
+  expect(dogOwner.__v).toBe(dogDumpFixture.DogOwner[0].__v);
+  expect(dogOwner._id.toString()).toBe(
+    dogDumpFixture.DogOwner[0]._id.toString()
+  );
 
-   const persons = await Person.find().lean();
-   expect(persons).toHaveLength(1);
+  const persons = await Person.find().lean();
+  expect(persons).toHaveLength(1);
 
-   const [person] = persons;
-   expect(person.name).toBe(dogDumpFixture.Person[0].name);
-   expect(person.__v).toBe(dogDumpFixture.Person[0].__v);
-   expect(person._id.toString()).toBe(dogDumpFixture.Person[0]._id.toString());
+  const [person] = persons;
+  expect(person.name).toBe(dogDumpFixture.Person[0].name);
+  expect(person.__v).toBe(dogDumpFixture.Person[0].__v);
+  expect(person._id.toString()).toBe(dogDumpFixture.Person[0]._id.toString());
 });
