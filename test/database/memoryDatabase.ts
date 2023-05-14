@@ -22,7 +22,8 @@ export const databaseTestModule = () => {
       reconnectInterval: 1000,
     };
 
-    await mongoose.connect(uri, mongooseOpts);
+    const connectReturn = await mongoose.connect(uri, mongooseOpts);
+    console.log({ uri, connectReturn });
   };
 
   /**
