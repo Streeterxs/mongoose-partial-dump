@@ -13,7 +13,6 @@
     "delete:node_modules": "find . -name \"node_modules\" -exec rm -rf '{}' +",
     "jest": "jest --no-cache --detectOpenHandles",
     "prepare": "husky install",
-    "prebuild": "eslint --fix tsconfig.json --fix",
     "babel": "babel-node --extensions \".es6,.js,.es,.mjs,.ts\"",
     "build": "npm run clear && yarn rollup --config",
     "build:linux:admin": "yarn build && chmod +x build/cli.cjs.js && chmod +x build/index.cjs.js",
