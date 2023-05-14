@@ -4,7 +4,7 @@ defaults: &defaults
   working_directory: ~/mongoose-partial-dumper
   executor:
     name: node/default
-    tag: 'lts'
+    tag: '16.19'
     
 orbs:
   node: circleci/node@4.5.1
