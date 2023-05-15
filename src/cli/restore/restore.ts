@@ -13,38 +13,38 @@ import { restore } from '../../restorer/restorer';
 const cwd = process.cwd();
 
 export const restoreCli = async (argv: any) => {
-   const sanitizedArgv = restoreArgvSanitize(argv);
-   const unvalidatedConfig = await getConfig(Configs.RESTORE);
+  const sanitizedArgv = restoreArgvSanitize(argv);
+  const unvalidatedConfig = await getConfig(Configs.RESTORE);
 
-   const validatedInputs = validateRestoreCliConfig(
-      sanitizedArgv,
-      unvalidatedConfig
-   );
-   if (!validatedInputs) {
-      return;
-   }
+  const validatedInputs = validateRestoreCliConfig(
+    sanitizedArgv,
+    unvalidatedConfig
+  );
+  if (!validatedInputs) {
+    return;
+  }
 
-   const { models, db, inputDir } = validatedInputs;
+  const { models, db, inputDir } = validatedInputs;
 
-   for (const model of models) {
-      const modelName = model.collection.name;
-      const schema = modelToSchema(model);
-      const collection = schema.get('collection');
+  for (const model of models) {
+    const modelName = model.collection.name;
+    const schema = modelToSchema(model);
+    const collection = schema.get('collection');
 
-      mongoose.model(modelName, schema, collection);
-   }
+    mongoose.model(modelName, schema, collection);
+  }
 
-   await connectToDb(db);
+  await connectToDb(db);
 
-   const getPartialPath = () => {
-      return path.join(cwd, inputDir);
-   };
+  const getPartialPath = () => {
+    return path.join(cwd, inputDir);
+  };
 
-   const partialDumpInput = getPartialPath();
+  const partialDumpInput = getPartialPath();
 
-   // eslint-disable-next-line
-   console.log('restoring: ', partialDumpInput);
+  // eslint-disable-next-line
+  console.log('restoring: ', partialDumpInput);
 
-   const dataString = fs.readFileSync(partialDumpInput, 'utf8');
-   await restore(dataString);
+  const dump = fs.readFileSync(partialDumpInput, 'utf8');
+  await restore({ dump });
 };
