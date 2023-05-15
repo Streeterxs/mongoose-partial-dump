@@ -31,7 +31,7 @@
     "semver": "^7.3.5",
     "simple-git": "^2.48.0",
     "yargs": "^17.0.0-candidate.13",
-    "yup": "^0.32.9"
+    "yup": "^1.1.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.10",
