@@ -24,7 +24,8 @@ export const restoreCli = async (argv: any) => {
     return;
   }
 
-  const { models, db, inputDir } = validatedInputs;
+  const { models, db, inputDir, defaultValues, defaultSingValues } =
+    validatedInputs;
 
   for (const model of models) {
     const modelName = model.collection.name;
@@ -46,5 +47,5 @@ export const restoreCli = async (argv: any) => {
   console.log('restoring: ', partialDumpInput);
 
   const dump = fs.readFileSync(partialDumpInput, 'utf8');
-  await restore({ dump });
+  await restore({ dump, defaultValues, defaultSingValues });
 };
