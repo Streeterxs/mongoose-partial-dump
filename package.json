@@ -29,7 +29,7 @@
     "lodash": "4.17.21",
     "mongoose": "^5.12.0",
     "semver": "^7.3.5",
-    "simple-git": "^2.48.0",
+    "simple-git": "^3.18.0",
     "yargs": "^17.0.0-candidate.13",
     "yup": "^1.1.1"
   },
