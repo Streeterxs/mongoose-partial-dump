@@ -45,7 +45,7 @@
     "@rollup/plugin-commonjs": "^25.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
-    "@rollup/plugin-replace": "^3.0.0",
+    "@rollup/plugin-replace": "^5.0.2",
     "@rollup/plugin-typescript": "^8.2.5",
     "@types/faker": "5.5.8",
     "@types/jest": "26.0.20",
