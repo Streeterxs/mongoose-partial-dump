@@ -17,10 +17,7 @@ export const databaseTestModule = () => {
 
     const mongooseOpts = {
       useNewUrlParser: true,
-      autoReconnect: true,
-      reconnectTries: Number.MAX_VALUE,
       useUnifiedTopology: true,
-      reconnectInterval: 1000,
     };
 
     await mongoose.connect(uri, mongooseOpts);
