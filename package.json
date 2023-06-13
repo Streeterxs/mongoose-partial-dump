@@ -27,7 +27,7 @@
     "faker": "^5.5.3",
     "generate-changelog": "^1.8.0",
     "lodash": "4.17.21",
-    "mongoose": "7.1.2",
+    "mongoose": "7.2.4",
     "semver": "^7.3.5",
     "simple-git": "^3.18.0",
     "yargs": "^17.0.0-candidate.13",
